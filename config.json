@@ -1,5 +1,10 @@
 {
     "cluster": {
-    "worker" : ["localhost:12345", "localhost:23456"]
+        "worker" : ["localhost:12345", "localhost:23456"]
+    },
+
+    "grpc_server": {
+        "ip": "127.0.0.1",
+        "port": 7777
     }
 }
