@@ -1,0 +1,5 @@
+{
+    "cluster": {
+    "worker" : ["localhost:12345", "localhost:23456"]
+    }
+}
