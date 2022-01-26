@@ -18,7 +18,7 @@ pub struct Woker {
 #[derive(Debug, Serialize, Deserialize)]
 pub struct GrpcServer {
     pub ip: String,
-    pub port: u32
+    pub port: u16
 }
 
 impl TfConfig {
