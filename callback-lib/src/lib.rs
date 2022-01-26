@@ -12,7 +12,7 @@ fn run_grpc_server() -> PyResult<()> {
 /// the `lib.name` setting in the `Cargo.toml`, else Python will not be able to
 /// import the module.
 #[pymodule]
-fn callback_api(_py: Python, m: &PyModule) -> PyResult<()> {
+fn callback_lib(_py: Python, m: &PyModule) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(run_grpc_server, m)?)?;
 
     Ok(())
