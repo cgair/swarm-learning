@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package swarm_control_service_proto;
+
+// The swarm control service definition.
+service SwarmNodeControl {
+    rpc NodeControl(ControlRequest) returns (ControlResponse);
+}
+
+message ControlRequest {
+    string task_id = 1;
+    string file_name = 2;
+}
+
+message ControlResponse {
+    bool accept = 1;
+}

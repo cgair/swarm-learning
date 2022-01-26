@@ -1,0 +1,19 @@
+[package]
+name = "grpc-server"
+version = "0.1.0"
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+prost           = "0.9"
+tonic           = { version = "0.6.2", features = ["tls", "compression"] }
+tokio           = {version = "1.0", features = ["rt-multi-thread", "time", "fs", "macros", "net"] }
+env_logger      = { version = "0.7.1" }
+log             = { version = "0.4.6", features = ["release_max_level_info"] }
+anyhow          = { version = "1.0.26" }
+
+config          = { path = "../config" }
+
+[build-dependencies]
+tonic-build     = { version = "0.6.2", features = ["prost", "compression"] }
