@@ -12,6 +12,5 @@ mod tests {
         }"#;
         let js: serde_json::Value = serde_json::from_str(conf).expect("JSON was not well-formatted");
         assert_eq!(js["cluster"]["worker"][0], "localhost:12345");
-        }
     }
 }
