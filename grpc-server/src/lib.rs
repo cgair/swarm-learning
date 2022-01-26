@@ -42,12 +42,15 @@ pub fn run() {
     let addr: IpAddr = tf_conf.grpc_server.ip.parse().expect("Ipv4Addr");
     let port = tf_conf.grpc_server.port;
     let socket = SocketAddr::new(addr, port);
+    log::info!("GrpcServer listening on {}", socket.to_string());
+
     let cutomserver = CustomServer::default();
 
     let rt = Runtime::new().expect("failed to obtain a new RunTime object");
     let server_future = Server::builder()
                         .add_service(SwarmNodeControlServer::new(cutomserver))
                         .serve(socket);
+    log::info!("Blocking Server...");
     rt.block_on(server_future).expect("failed to successfully run the future on RunTime");
 }
 
@@ -65,7 +68,6 @@ pub fn run() {
 //     let port = tf_conf.grpc_server.port;
 //     let socket = SocketAddr::new(addr, port);
 
-//     log::info!("GreeterServer listening on {:?}", socket);
 //     let cutomserver = CustomServer::default();
 //     Server::builder()
 //         .add_service(SwarmNodeControlServer::new(cutomserver))
