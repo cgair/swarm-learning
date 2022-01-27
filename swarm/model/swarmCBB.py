@@ -94,9 +94,10 @@ class SwarmCallback(tf.keras.callbacks.Callback):
             # Block only when sync interval is reached.
             for i in range(0, 10):      # We check if the file is prepared for 10 times.
                 e = epoch + 1
-                flag, path = file_prepared(e, batch)
+                save_batch = batch + 1
+                flag, path = file_prepared(e, save_batch)
                 if flag:
-                    print(f"[+] Syncing at epoch: {e}, batch: {batch}...")
+                    print(f"[+] Syncing at epoch: {e}, save batch: {save_batch}...")
                     break
                 # print(f"[-] File does not prepared, retry {i}")
 
