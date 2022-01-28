@@ -1,6 +1,7 @@
 # Most of the code is written according to site: https://github.com/keras-team/keras/blob/v2.7.0/keras/callbacks.py#L1160-L1583
 import tensorflow as tf
-from utils import file_prepared
+import subprocess
+from utils import CHECKPOINTS_DIR, TASK_ID, file_prepared, send_file
 
 
 class SwarmCallback(tf.keras.callbacks.Callback):
@@ -94,11 +95,17 @@ class SwarmCallback(tf.keras.callbacks.Callback):
             # Block only when sync interval is reached.
             for i in range(0, 10):      # We check if the file is prepared for 10 times.
                 e = epoch + 1
-                save_batch = batch + 1
-                flag, path = file_prepared(e, save_batch)
+                b = batch + 1
+                flag, path = file_prepared(e, b)
                 if flag:
-                    print(f"[+] Syncing at epoch: {e}, save batch: {save_batch}...")
+                    print(f"[+] Syncing at epoch: {e}, batch: {b}...")
+                    model_name = 'weights.{:0>2}-{:0>2}.hdf5'.format(e, b)
+                    file = f"{CHECKPOINTS_DIR}/{model_name}"
+                    for i in range(0, 10):      # We send the file for 10 times if not success.
+                        if send_file(TASK_ID, file):
+                            break
                     break
-                # print(f"[-] File does not prepared, retry {i}")
+                print(f"[-] File does not prepared, retry {i}")
+
 
 
