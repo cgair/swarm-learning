@@ -1,7 +1,5 @@
 import tensorflow as tf
 import numpy as np
-import time
-import datetime
 from swarmCBB import SwarmCallback
 import os
 
@@ -42,7 +40,7 @@ def main():
                     metrics=['accuracy'])
 
     save_model_callback = tf.keras.callbacks.ModelCheckpoint(
-        filepath='./checkpoints/weights.{epoch:02d}-{batch:02d}.hdf5', 
+        filepath='./checkpoints/weights.{epoch:02d}-{batch:02d}.h5', 
         save_weights_only=True, 
         verbose=1,
         monitor='val_loss', 
@@ -59,11 +57,12 @@ def main():
                 verbose=1, 
                 validation_data=(x_test, y_test),           
                 callbacks=[save_model_callback, swarmCallback])    
+                # callbacks=[save_model_callback])    
 
     # Save model and weights
-    model_path = os.path.join(modelDir, model_name)
-    model.save(model_path)
-    print('Saved the trained model!')
+    # model_path = os.path.join(modelDir, model_name)
+    # model.save(model_path)
+    # print('Saved the trained model!')
 
 if __name__ == '__main__':
   main()

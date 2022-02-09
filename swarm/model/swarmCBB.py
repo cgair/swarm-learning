@@ -1,7 +1,8 @@
 # Most of the code is written according to site: https://github.com/keras-team/keras/blob/v2.7.0/keras/callbacks.py#L1160-L1583
+from asyncio import tasks
 import tensorflow as tf
 import subprocess
-from utils import CHECKPOINTS_DIR, TASK_ID, file_prepared, send_file
+from utils import MODEL_DIR, TASK_ID, file_prepared, get_merge_file, send_file
 
 
 class SwarmCallback(tf.keras.callbacks.Callback):
@@ -33,28 +34,9 @@ class SwarmCallback(tf.keras.callbacks.Callback):
         #     self._merge_model(epoch=self._current_epoch, batch=batch, logs=logs)
             
     def on_train_batch_end(self, batch, logs=None):
-        if self._should_sync_on_batch(batch):
-            # print("Should sync")
+        if self._should_sync_merge_on_batch(batch):
             self._sync_model(epoch=self._current_epoch, batch=batch, logs=logs)
-
-    def _should_merge_on_batch(self, batch):
-        """
-        Handles batch-level merging logic.
-        """
-        if self.merge_freq == 'epoch':
-            return False
-
-        if batch <= self._last_batch_seen:  # New epoch.
-            add_batches = batch + 1  # batches are zero-indexed.
-        else:
-            add_batches = batch - self._last_batch_seen
-        self._batches_seen_since_last_merging += add_batches
-        self._last_batch_seen = batch
-
-        if self._batches_seen_since_last_merging >= self.merge_freq:
-            self._batches_seen_since_last_merging = 0
-            return True
-        return False
+            self._merge_model(epoch=self._current_epoch, batch=batch, logs=logs)
 
     def _merge_model(self, epoch, batch, logs=None):
         """Merge the model.
@@ -67,8 +49,24 @@ class SwarmCallback(tf.keras.callbacks.Callback):
             # Block only when merging interval is reached.
             print("\n")
             print(f"[+] Merging at epoch: {epoch}, batch: {batch}...")
+            peer_model = self._get_model()
+            task_id = "uuid-001"
+            weights_path = get_merge_file(task_id, epoch, batch)
 
-    def _should_sync_on_batch(self, batch):
+            # Loads the weights
+            peer_model.load_weights(weights_path)
+            # current_weights to store the current weights.
+            current_weights = self.model.get_weights()
+            peer_weights = peer_model.get_weights()
+
+            size = len(peer_model.get_weights())
+            merge_weights = [0] * size
+            for i in range(0, size):
+                merge_weights[i] = (current_weights[i] + peer_weights[i]) / 2
+
+            self.model.set_weights(merge_weights)
+
+    def _should_sync_merge_on_batch(self, batch):
         """
         Handles batch-level syncing logic.
         """
@@ -99,13 +97,28 @@ class SwarmCallback(tf.keras.callbacks.Callback):
                 flag, path = file_prepared(e, b)
                 if flag:
                     print(f"[+] Syncing at epoch: {e}, batch: {b}...")
-                    model_name = 'weights.{:0>2}-{:0>2}.hdf5'.format(e, b)
-                    file = f"{CHECKPOINTS_DIR}/{model_name}"
+                    model_name = 'weights.{:0>2}-{:0>2}.h5'.format(e, b)
+                    file = f"{MODEL_DIR}{model_name}"
                     for i in range(0, 10):      # We send the file for 10 times if not success.
                         if send_file(TASK_ID, file):
                             break
                     break
                 print(f"[-] File does not prepared, retry {i}")
+
+    
+    def _get_model(self):
+        model = tf.keras.models.Sequential([
+            tf.keras.layers.Flatten(input_shape=(28, 28)),
+            tf.keras.layers.Dense(512, activation=tf.nn.relu),
+            tf.keras.layers.Dropout(0.2),
+            tf.keras.layers.Dense(10, activation=tf.nn.softmax)
+        ])
+
+        model.compile(optimizer='adam',
+                        loss='sparse_categorical_crossentropy',
+                        metrics=['accuracy'])
+
+        return model
 
 
 
