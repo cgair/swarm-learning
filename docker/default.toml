@@ -1,0 +1,21 @@
+# === DEFAULT CONFIG ===
+# This file includes default values that will be overwritten
+# by the runtime config (local.toml) or environment variables
+
+fs_root = "/ufs/SMLNODE/fs"
+
+[server_config]
+# Server host name
+host = "localhost"
+# Socket address to bind
+ip = "0.0.0.0"
+# Port that should be listened on
+port = 50051
+
+[tls_config]
+# Enable/disable TLS
+enabled = false
+# Path to the certificate file
+certificate_path = "tls/cert.pem"
+# Path to the key file
+key_path  = "tls/key.pem"
