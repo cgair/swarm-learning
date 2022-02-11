@@ -1,0 +1,1 @@
+This is where tf save the Keras model or model weights at some frequency.
