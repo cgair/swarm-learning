@@ -1,4 +1,6 @@
-{
+{   
+    "task_type": "deep learning",
+    "task_id": "uuid-001",
     "cluster": {
         "worker" : ["localhost:12345", "localhost:23456"]
     },
