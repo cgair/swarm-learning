@@ -32,7 +32,7 @@ def get_model():
     return model
 
 def main():
-    dataDir = os.getenv('DATA_DIR', '../data')
+    dataDir = os.getenv('DATA_DIR', '../../data')
 
     (x_train, y_train),(x_test, y_test) = load_data(dataDir)
     x_train, x_test = x_train / 255.0, x_test / 255.0
