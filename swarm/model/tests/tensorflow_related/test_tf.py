@@ -1,4 +1,3 @@
-from operator import ge
 import tensorflow as tf
 import os
 import numpy as np
@@ -32,41 +31,41 @@ def get_model():
     return model
 
 def main():
-    dataDir = os.getenv('DATA_DIR', '../../data')
+    dataDir = os.getenv('DATA_DIR', '../../../data')
 
     (x_train, y_train),(x_test, y_test) = load_data(dataDir)
     x_train, x_test = x_train / 255.0, x_test / 255.0
 
     # checkpoint_path = "/ufs/SMLNODE/fs/uuid-001/weights.01-100.h5"
-    checkpoint_path = "./checkpoints/weights.01-100.h5"
-    checkpoint_path2 = "./checkpoints/weights.01-200.h5"
+    checkpoint_path = "../../checkpoints/weights.01-100.h5"
+    checkpoint_path2 = "../../checkpoints/weights.01-200.h5"
 
     model = get_model()
     # Loads the weights
     model.load_weights(checkpoint_path)
 
-    model2 = get_model()
-    model2.load_weights(checkpoint_path2)
+    # model2 = get_model()
+    # model2.load_weights(checkpoint_path2)
 
     # # Evaluate the model
     # loss, acc = model.evaluate(x_test, y_test, verbose=2)
     # print("Untrained model, accuracy: {:5.2f}%".format(100 * acc))
     model.summary()
-    # print("===================Flatten============================")
-    # print(model.get_weights()[0])
-    # print(f"len = {len(model.get_weights()[0])}")
-    # print("====================Dense===========================")
-    # print(model.get_weights()[1])
-    # print(f"len = {len(model.get_weights()[1])}")
-    # print("===================Dropout============================")
-    # print(model.get_weights()[2])
-    # print(f"len = {len(model.get_weights()[2])}")
-    # print("====================Dense===========================")
-    # print(model.get_weights()[3])
-    # print(f"len = {len(model.get_weights()[3])}")
+    print("===================Flatten============================")
+    print(model.get_weights()[0])
+    print(f"len = {len(model.get_weights()[0])}")
+    print("====================Dense===========================")
+    print(model.get_weights()[1])
+    print(f"len = {len(model.get_weights()[1])}")
+    print("===================Dropout============================")
+    print(model.get_weights()[2])
+    print(f"len = {len(model.get_weights()[2])}")
+    print("====================Dense===========================")
+    print(model.get_weights()[3])
+    print(f"len = {len(model.get_weights()[3])}")
 
     weights = model.get_weights() #获取整个网络模型的全部参数
-    weights2 = model2.get_weights() #获取整个网络模型的全部参数
+    # weights2 = model2.get_weights() #获取整个网络模型的全部参数
 
     # print(f"len  = {len(weights)}")
     # print(weights [0].shape)  #第一层的w
@@ -78,15 +77,15 @@ def main():
     # weights = layer1.get_weights()   #获取该层的参数W和b
     # print(weights)
     # print("===============================================================")
-    size = len(weights)
-    end_data= [0]*size
-    for i in range(0, size):
-        end_data[i] = (weights[i]+weights2[i])/2
+    # size = len(weights)
+    # end_data= [0]*size
+    # for i in range(0, size):
+    #     end_data[i] = (weights[i]+weights2[i])/2
 
     # print(end_data)
 
-    model.set_weights(end_data)
-    model.summary()
+    # model.set_weights(end_data)
+    # model.summary()
 
 
 

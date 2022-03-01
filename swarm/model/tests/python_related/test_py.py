@@ -1,5 +1,5 @@
 import subprocess
-from utils import send_file
+# from utils import send_file
 import socket
 
 def get_host_ip():
@@ -27,5 +27,12 @@ if __name__ == '__main__':
     # #标准错误中有错误信息
     # print(res.stderr.read())
 
-    send_file("uuid-004", "/home/chenge/workplace/ufs/config/default.toml")
+    # send_file("uuid-004", "/home/chenge/workplace/ufs/config/default.toml")
     print(get_host_ip())
+
+
+    from rlp.sedes import Binary
+    b = Binary.fixed_length(20, allow_empty=True)
+    print(b)
+    print(len("0x19aeb665dfa6a8445a46cd9a5c666ac6c0d03c54"))
+    print(len("0x8000000000000000000000000000000000000000"))

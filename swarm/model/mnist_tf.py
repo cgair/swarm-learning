@@ -56,8 +56,8 @@ def main():
                 epochs=max_epochs,
                 verbose=1, 
                 validation_data=(x_test, y_test),           
-                callbacks=[save_model_callback, swarmCallback])    
-                # callbacks=[save_model_callback])    
+                # callbacks=[save_model_callback, swarmCallback])    
+                callbacks=[save_model_callback])    
 
     # Save model and weights
     # model_path = os.path.join(modelDir, model_name)
