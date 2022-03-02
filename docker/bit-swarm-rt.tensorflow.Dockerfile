@@ -23,13 +23,10 @@ RUN apt-get update && apt-get install -y curl \
 # RUN wget -O /usr/local/bin/dumb-init https://github.com/Yelp/dumb-init/releases/download/v1.2.5/dumb-init_1.2.5_x86_64
 # RUN chmod +x /usr/local/bin/dumb-init
 
-# rust env
-# ENV PATH="/root/.cargo/bin:${PATH}"
-# install rust
-#     build-essential \
-#     git 
-# RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
-# RUN rustup update
+# Get Rust
+RUN curl https://sh.rustup.rs -sSf | sh -s -- -y
+ENV PATH="/root/.cargo/bin:${PATH}"
+RUN rustup update
 
 # run script
 # RUN mkdir -p /script/
