@@ -2,10 +2,10 @@
 use pyo3::prelude::*;
 use port_ethabi::{parse_token, encode_single, ParamType};
 
-/// Encode array of params with unknown size.
-/// eg. int[], bool[], address[5][]
+/// Encode ethereum ABI params.
+/// eg. int256, uint256, string, int[], address[5][], etc.
 #[pyfunction]
-pub fn encode_array(param_type: &str, value: &str) -> PyResult<String> {
+pub fn encode(param_type: &str, value: &str) -> PyResult<String> {
     // we always use lenient tokenize
     let lenient = true;
 

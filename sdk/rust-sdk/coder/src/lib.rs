@@ -4,14 +4,14 @@ use port_ethabi::execute;
 mod encoder;
 mod decoder;
 
-use crate::encoder::__pyo3_get_function_encode_array;
+use crate::encoder::__pyo3_get_function_encode;
 
 /// A Python module implemented in Rust. The name of this function must match
 /// the `lib.name` setting in the `Cargo.toml`, else Python will not be able to
 /// import the module.
 #[pymodule]
 fn coder_lib(_py: Python, m: &PyModule) -> PyResult<()> {
-    m.add_function(wrap_pyfunction!(encode_array, m)?)?;
+    m.add_function(wrap_pyfunction!(encode, m)?)?;
 
     Ok(())
 }
