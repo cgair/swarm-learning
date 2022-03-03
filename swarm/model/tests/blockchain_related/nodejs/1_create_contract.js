@@ -1,7 +1,8 @@
 /* eslint-disable */
 const { Conflux } = require('../../../../../sdk/js-conflux-sdk/'); // require('js-conflux-sdk');
 let fs = require("fs")
-let config = require("./contract/template/config.json");
+// let config = require("./contract/template/config.json");
+let config = require("./contract/large_arg/config.json");
 
 const cfx = new Conflux({
   // 节点的地址和端口号，这里用的测试网。实际最好用最新的主网地址
@@ -14,8 +15,8 @@ const cfx = new Conflux({
 
 const accountAlice = cfx.Account('0xb205017cc1b95e12aa37784b3e66eaf099ba6cf0e80cf10f8fc87b44abba53a7');
 const contract = cfx.Contract({
-  abi: require('./contract/template/abi.json'),
-  bytecode: "0x" + require('./contract/template/bytecode.json').bytecode
+  abi: require('./contract/large_arg/abi.json'),
+  bytecode: "0x" + require('./contract/large_arg/bytecode.json').bytecode
 }).constructor();
 
 function showContract() {
@@ -30,7 +31,7 @@ function showContract() {
       let result = await contract.sendTransaction({from: accountAlice}).mined();
       console.log('result', JSON.stringify(result, null, 2));
       config.contract = result.contractCreated
-      fs.writeFileSync("./contract/template/config.json", JSON.stringify(config, null, 4));
+      fs.writeFileSync("./contract/large_arg/config.json", JSON.stringify(config, null, 4));
   } catch (e) {
       console.log(e);
   }
