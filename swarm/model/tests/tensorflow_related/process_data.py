@@ -47,29 +47,29 @@ def main():
     # loss, acc = model.evaluate(x_test, y_test, verbose=2)
     # print("Untrained model, accuracy: {:5.2f}%".format(100 * acc))
     model.summary()
-    print("=================================================================")
-    print("                          Flatten                                ")
-    print("=================================================================")
-    print(model.get_weights()[0])
-    print(f"[+] 第一层的 w's len = {len(model.get_weights()[0])}")
-    print("=================================================================")
-    print("                           Dense                                 ")
-    print("=================================================================")
-    print(model.get_weights()[1])
-    print(f"[+] 第一层的 b's len = {len(model.get_weights()[1])}")
-    print("=================================================================")
-    print("                          Dropout                                ")
-    print("=================================================================")
-    print(model.get_weights()[2])
-    print(f"[+] 第二层的 w's len = {len(model.get_weights()[2])}")
-    print("=================================================================")
-    print("                           Dense                                 ")
-    print("=================================================================")
-    print(model.get_weights()[3])
-    print(f"[+] 第二层的 b's len = {len(model.get_weights()[3])}")
+    # print("=================================================================")
+    # print("                          Flatten                                ")
+    # print("=================================================================")
+    # print(model.get_weights()[0])
+    # print(f"[+] 第一层的 w's len = {len(model.get_weights()[0])}")
+    # print("=================================================================")
+    # print("                           Dense                                 ")
+    # print("=================================================================")
+    # print(model.get_weights()[1])
+    # print(f"[+] 第一层的 b's len = {len(model.get_weights()[1])}")
+    # print("=================================================================")
+    # print("                          Dropout                                ")
+    # print("=================================================================")
+    # print(model.get_weights()[2])
+    # print(f"[+] 第二层的 w's len = {len(model.get_weights()[2])}")
+    # print("=================================================================")
+    # print("                           Dense                                 ")
+    # print("=================================================================")
+    # print(model.get_weights()[3])
+    # print(f"[+] 第二层的 b's len = {len(model.get_weights()[3])}")
 
-    # weights = model.get_weights() #获取整个网络模型的全部参数
-    # print(f"len  = {len(weights)}")
+    weights = model.get_weights() #获取整个网络模型的全部参数
+    # print(f"[+] len  = {len(weights)}")
     # print(weights [0].shape)  #第一层的w
     # print(weights [1].shape)  #第一层的b
     # print(weights [2].shape)  #第二层的w
@@ -82,6 +82,7 @@ def main():
     # process layer x
     # 
     layerx = model.get_weights()[2]
+    print(layerx[0])
     size_outside = layerx.shape[0]
     size_inside = layerx.shape[1]
     print(f"[+] shape: ({size_outside}, {size_inside})")
@@ -102,13 +103,23 @@ def main():
             elif layerx[i][j] < 0:
                 layerx[i][j] = int(layerx[i][j] - 0.5 )
                 
-    print(list(layerx[0]))
-
+    layer0 = layerx[0].tolist()
+    layer0 = [int(l) for l in layer0]
+    # print(type(layer0[0]))
+    print(layer0)
+    ret = "["
+    count = 0
+    for l in layer0:
+        ret += str(l)
+        if count == len(layer0) - 1:
+            break
+        ret += ","
+        count += 1
+    ret += "]"
+    print(ret)
 
 def number_of_digits_post_decimal(x):
     return len(str(x).split(".")[1])
-
-
 
 
 if __name__ == '__main__':
