@@ -124,6 +124,13 @@ pub fn encode(token: &Token) -> Vec<u8> {
 	encode_head_tail(&mediates).iter().flat_map(|word| word.to_vec()).collect()
 }
 
+/// Encodes vector of tokens into ABI compliant vector of bytes.
+pub fn encode_some(tokens: &[Token]) -> Vec<u8> {
+	let mediates = &tokens.iter().map(encode_token).collect::<Vec<_>>();
+
+	encode_head_tail(mediates).iter().flat_map(|word| word.to_vec()).collect()
+}
+
 fn encode_token(token: &Token) -> Mediate {
 	match *token {
 		Token::Address(ref address) => {

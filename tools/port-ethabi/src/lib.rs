@@ -14,8 +14,9 @@ pub mod encoder;
 mod token;
 mod tools;
 
-pub use token::parse_token;
+pub use token::{parse_token, parse_tokens};
 pub use encoder::encode as encode_single;
+pub use encoder::encode_some;
 pub use ethabi::param_type::ParamType as ParamType;
 
 #[derive(StructOpt, Debug)]
@@ -158,17 +159,6 @@ fn load_event(path: &str, name_or_signature: &str) -> anyhow::Result<Event> {
 			}
 		}
 	}
-}
-
-fn parse_tokens(params: &[(ParamType, &str)], lenient: bool) -> anyhow::Result<Vec<Token>> {
-	params
-		.iter()
-		.map(|&(ref param, value)| match lenient {
-			true => LenientTokenizer::tokenize(param, value),
-			false => StrictTokenizer::tokenize(param, value),
-		})
-		.collect::<Result<_, _>>()
-		.map_err(From::from)
 }
 
 fn encode_input(path: &str, name_or_signature: &str, values: &[String], lenient: bool) -> anyhow::Result<String> {

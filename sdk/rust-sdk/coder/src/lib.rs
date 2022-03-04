@@ -4,7 +4,7 @@ use port_ethabi::execute;
 mod encoder;
 mod decoder;
 
-use crate::encoder::__pyo3_get_function_encode;
+use crate::encoder::{__pyo3_get_function_encode, __pyo3_get_function_encode_many};
 
 /// A Python module implemented in Rust. The name of this function must match
 /// the `lib.name` setting in the `Cargo.toml`, else Python will not be able to
@@ -12,6 +12,7 @@ use crate::encoder::__pyo3_get_function_encode;
 #[pymodule]
 fn coder_lib(_py: Python, m: &PyModule) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(encode, m)?)?;
+    m.add_function(wrap_pyfunction!(encode_many, m)?)?;
 
     Ok(())
 }
