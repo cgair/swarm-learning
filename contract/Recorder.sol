@@ -1,10 +1,10 @@
 pragma solidity ^0.5.0;
 
 contract Recorder {
-    event InitTaskDone();
-    event UpdateTaskDone();
-    event RecordDone(address from);
-    event prepareGiftDone();
+    event InitTaskDone(uint taskID, address who);
+    event UpdateTaskDone(uint taskID, address who, uint enrollCount);
+    event RecordDone(uint taskID, address who, uint64 layer, uint64 w_or_b, uint128 offset);
+    event PrepareGiftDone(uint taskID, uint64 layer, uint64 w_or_b, uint128 offset);
 
     // 用途: "索引存储"
     struct SliceInfo{
@@ -48,36 +48,37 @@ contract Recorder {
     mapping(uint => Task) taskList;
 
     // 初始化一个新任务
-    function initTask(uint id, uint reqNum) private returns (bool){
-        taskList[id].taskID = id;
-        taskList[id].taskReqNum = reqNum;
-        taskList[id].currentNum = 1;
-        taskList[id].partnerList.push(msg.sender);
-        taskList[id].status = true;
+    function initTask(Task storage t, uint id, uint reqNum) private returns (bool){
+        t.taskID = id;
+        t.taskReqNum = reqNum;
+        t.currentNum = 1;
+        t.partnerList.push(msg.sender);
+        t.status = true;
         return true;
     }
 
     // 更新任务伙伴信息
-    function updateTask(uint taskID) private returns (bool) {
-        taskList[taskID].currentNum += 1;
-        assert(taskList[taskID].currentNum <= taskList[taskID].taskReqNum);
-        taskList[taskID].partnerList.push(msg.sender);
+    function updateTask(Task storage t) private returns (bool) {
+        t.currentNum += 1;
+        assert(t.currentNum <= t.taskReqNum);
+        t.partnerList.push(msg.sender);
         return true; // return SUC
     }
 
     // 外部API
     function taskHandler(uint id, uint reqNum) public returns (bool) {
         // TODO: ID生成的讨论
-        if (taskList[id].currentNum == 0) {
-            initTask(id, reqNum);
-            emit InitTaskDone();
+        Task storage t = taskList[id];
+        if (t.currentNum == 0) {
+            initTask(t, id, reqNum);
+            emit InitTaskDone(id, msg.sender);
             return true;
         }
 
-        if (taskList[id].status == true) {
-            updateTask(id);
-            assert(reqNum == taskList[id].taskReqNum);
-            emit UpdateTaskDone();
+        if (t.status == true) {
+            updateTask(t);
+            assert(reqNum == t.taskReqNum);
+            emit UpdateTaskDone(id, msg.sender, t.currentNum);
             return true;
         }
         else return false;
@@ -198,17 +199,17 @@ contract Recorder {
             if (prepareGift(t, sInfo) == true) {
                 delete t.SNPresenters;
                 // TODO: 需要垃圾回收
-                emit prepareGiftDone();
+                emit PrepareGiftDone(taskID, layer, w_or_b, offset);
             }
         } else {
-            emit RecordDone(msg.sender);
+            emit RecordDone(taskID, msg.sender, layer, w_or_b, offset);
         }
 
         return (true);
 
     }
 
-    // 当MLNode监听到prepareGiftDone事件时可调用此方法
+    // 当MLNode监听到PrepareGiftDone事件时可调用此方法
     function getGift(uint taskID, uint64 layer, uint64 w_or_b, uint128 offset)
     public view returns (uint, uint, int128[] memory) {
         return (taskList[taskID].SNEpoch, taskList[taskID].SNBatch,
@@ -216,14 +217,14 @@ contract Recorder {
         //t.allGifts[s.layer][s.w_or_b][s.offset]
     }
 
-    function gettest1(uint taskID, uint64 layer, uint64 w_or_b, uint128 offset)
+    function getTest1(uint taskID, uint64 layer, uint64 w_or_b, uint128 offset)
     public view returns (uint, uint, int128[] memory) {
         return (taskList[taskID].SNEpoch, taskList[taskID].SNBatch,
         taskList[taskID].recorders[msg.sender][layer][w_or_b][offset].para);
 
     }
 
-    function gettest2()
+    function getTest2()
     public view returns (uint, uint, uint, uint) {
         return (taskList[1].SNEpoch, taskList[1].SNBatch,
         taskList[1].partnerList.length,
