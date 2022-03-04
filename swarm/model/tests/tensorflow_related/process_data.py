@@ -1,7 +1,12 @@
 #!/usr/local/bin/python
+import sys
+sys.path.append("/swarm/swarm/model/")
+
 import tensorflow as tf
 import os
 import numpy as np
+
+from utils.utils import should_split, caclulate_factor, expand_with_factor, send_msg
 
 def load_data(dataDir):
     """Loads the MNIST dataset.
@@ -32,12 +37,12 @@ def get_model():
     return model
 
 def main():
-    dataDir = os.getenv('DATA_DIR', '../../../data')
+    dataDir = os.getenv('DATA_DIR', '/swarm/swarm/data')
 
     (x_train, y_train),(x_test, y_test) = load_data(dataDir)
     x_train, x_test = x_train / 255.0, x_test / 255.0
 
-    checkpoint_path = "../../checkpoints/weights.01-100.h5"
+    checkpoint_path = "/swarm/swarm/model/checkpoints/weights.01-100.h5"
 
     model = get_model()
     # Loads the weights
@@ -47,28 +52,28 @@ def main():
     # loss, acc = model.evaluate(x_test, y_test, verbose=2)
     # print("Untrained model, accuracy: {:5.2f}%".format(100 * acc))
     model.summary()
-    # print("=================================================================")
-    # print("                          Flatten                                ")
-    # print("=================================================================")
-    # print(model.get_weights()[0])
-    # print(f"[+] 第一层的 w's len = {len(model.get_weights()[0])}")
-    # print("=================================================================")
-    # print("                           Dense                                 ")
-    # print("=================================================================")
-    # print(model.get_weights()[1])
-    # print(f"[+] 第一层的 b's len = {len(model.get_weights()[1])}")
-    # print("=================================================================")
-    # print("                          Dropout                                ")
-    # print("=================================================================")
-    # print(model.get_weights()[2])
-    # print(f"[+] 第二层的 w's len = {len(model.get_weights()[2])}")
-    # print("=================================================================")
-    # print("                           Dense                                 ")
-    # print("=================================================================")
-    # print(model.get_weights()[3])
-    # print(f"[+] 第二层的 b's len = {len(model.get_weights()[3])}")
+    print("=================================================================")
+    print("                          Flatten                                ")
+    print("=================================================================")
+    print(model.get_weights()[0])
+    print(f"[+] 第一层的 w's len = {len(model.get_weights()[0])}")
+    print("=================================================================")
+    print("                           Dense                                 ")
+    print("=================================================================")
+    print(model.get_weights()[1])
+    print(f"[+] 第一层的 b's len = {len(model.get_weights()[1])}")
+    print("=================================================================")
+    print("                          Dropout                                ")
+    print("=================================================================")
+    print(model.get_weights()[2])
+    print(f"[+] 第二层的 w's len = {len(model.get_weights()[2])}")
+    print("=================================================================")
+    print("                           Dense                                 ")
+    print("=================================================================")
+    print(model.get_weights()[3])
+    print(f"[+] 第二层的 b's len = {len(model.get_weights()[3])}")
 
-    weights = model.get_weights() #获取整个网络模型的全部参数
+    # weights = model.get_weights() #获取整个网络模型的全部参数
     # print(f"[+] len  = {len(weights)}")
     # print(weights [0].shape)  #第一层的w
     # print(weights [1].shape)  #第一层的b
@@ -81,41 +86,23 @@ def main():
 
     # process layer x
     # 
-    layerx = model.get_weights()[2]
-    print(layerx[0])
-    size_outside = layerx.shape[0]
-    size_inside = layerx.shape[1]
-    print(f"[+] shape: ({size_outside}, {size_inside})")
-    # get max len post decimal
-    max_len = 0
-    r_len = 0
-    for i in range(0, size_outside):
-        for j in range(0, size_inside):
-            r_len = number_of_digits_post_decimal(layerx[i][j])
-            if r_len > max_len:
-                max_len = r_len
-
-    for i in range(0, size_outside):
-        for j in range(0, size_inside):
-            layerx[i][j] = layerx[i][j] * (10 ** r_len)
-            if layerx[i][j] > 0:
-                layerx[i][j] = int(layerx[i][j] + 0.5 )
-            elif layerx[i][j] < 0:
-                layerx[i][j] = int(layerx[i][j] - 0.5 )
-                
-    layer0 = layerx[0].tolist()
-    layer0 = [int(l) for l in layer0]
-    # print(type(layer0[0]))
-    print(layer0)
-    ret = "["
-    count = 0
-    for l in layer0:
-        ret += str(l)
-        if count == len(layer0) - 1:
-            break
-        ret += ","
-        count += 1
-    ret += "]"
+    layerx = model.get_weights()
+    # for l in layerx:
+    #     print(should_split(l.shape))
+    layerx = layerx[3]
+    # print(f"[+] Type: {type(layerx)}, Val = {layerx}")
+    layerx = list(layerx.flatten())
+    factor = caclulate_factor(layerx)
+    ret = expand_with_factor(layerx, factor)
+    # print(f"[+] Type: {type(ret)}, Val = {ret}")
+    ret = send_msg("func",
+                    0, 
+                    1, 
+                    1, 
+                    0, 
+                    factor,
+                    0,
+                    ret)
     print(ret)
 
 def number_of_digits_post_decimal(x):
