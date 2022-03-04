@@ -39,15 +39,14 @@ class Weights:
         self._data = copy.deepcopy(weights)
 
     def encode(self) -> str:
+        self._entire_to_string()
         assert self._entire_str != None, "Entire string is None"
         return self._entire_str
     
     def _entire_to_string(self):
         weight_str = self._data_to_string()
-        encoded_weight = encode("int256[]", weight_str)
-        other_params = encode_many(["uint", str(self._task_id), "int128", str(self._epoch), "int128", str(self._batch), "uint64", str(self._layer), \
-                                    "uint64", self._w_or_b, "uint128", self._factor, "uint128", self._offset])
-        self._entire_str = other_params + encoded_weight
+        self._entire_str = encode_many(["uint", str(self._task_id), "int128", str(self._epoch), "int128", str(self._batch), "uint64", str(self._layer), \
+                                    "uint64", str(self._w_or_b), "uint128", str(self._factor), "uint128", str(self._offset), "int128[]",weight_str])
 
 
     def _data_to_string(self) -> str:
