@@ -1,10 +1,10 @@
 pragma solidity ^0.5.0;
 
 contract Recorder {
-    event InitTaskDone(uint taskID, address who);
-    event UpdateTaskDone(uint taskID, address who, uint enrollCount);
-    event RecordDone(uint taskID, address who, uint64 layer, uint64 w_or_b, uint128 offset);
-    event PrepareGiftDone(uint taskID, uint64 layer, uint64 w_or_b, uint128 offset);
+    event InitTaskDone(uint indexed taskID, address indexed who);
+    event UpdateTaskDone(uint indexed taskID, address indexed who, uint enrollCount);
+    event RecordDone(uint indexed taskID, address indexed who, uint64 indexed layer, uint64 w_or_b, uint128 offset);
+    event PrepareGiftDone(uint indexed taskID, uint64 indexed layer, uint64 indexed w_or_b, uint128 offset);
 
     // 用途: "索引存储"
     struct SliceInfo{
