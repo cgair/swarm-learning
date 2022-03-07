@@ -1,6 +1,6 @@
 from typing import Tuple, List
 import copy
-from coder_lib import encode, encode_many
+from coder_lib import encode_many
 
 
 class Weights:
