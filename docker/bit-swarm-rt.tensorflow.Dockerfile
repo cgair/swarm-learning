@@ -17,16 +17,13 @@ ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && apt-get install -y curl \
     wget \
     python3 \
-    python3-pip 
+    python3-pip \
+    # iputils-ping
+    python3.7-tk 
 
 # Downloading the dumb-init binary directly
 # RUN wget -O /usr/local/bin/dumb-init https://github.com/Yelp/dumb-init/releases/download/v1.2.5/dumb-init_1.2.5_x86_64
 # RUN chmod +x /usr/local/bin/dumb-init
-
-# Get Rust
-RUN curl https://sh.rustup.rs -sSf | sh -s -- -y
-ENV PATH="/root/.cargo/bin:${PATH}"
-RUN rustup update
 
 # run script
 # RUN mkdir -p /script/
@@ -43,9 +40,14 @@ RUN rustup update
 # See http://bugs.python.org/issue19846
 ENV LANG C.UTF-8
 
-RUN python3 -m pip --no-cache-dir install --upgrade \
-    "pip<20.3" \
-    setuptools
+# RUN python3 -m pip --no-cache-dir install --upgrade \
+#     "pip<20.3" \
+#     setuptools
+RUN python3 -m pip install --upgrade pip
+
+# Install dependencies
+COPY requirements.txt .
+RUN python3 -m pip install -r requirements.txt
 
 # Some TF tools expect a "python" binary
 RUN ln -s $(which python3) /usr/local/bin/python
@@ -62,11 +64,30 @@ ARG TF_PACKAGE_VERSION=
 
 # change pip source
 RUN python3 -m pip install --no-cache-dir --index-url https://pypi.doubanio.com/simple/ ${TF_PACKAGE}${TF_PACKAGE_VERSION:+==${TF_PACKAGE_VERSION}}
-
 COPY bashrc /etc/bash.bashrc
 RUN chmod a+rwx /etc/bash.bashrc
 
+RUN mkdir -p /sdk/python
+RUN mkdir -p /sdk/rust/coder
+RUN mkdir -p /tools/port-ethabi
+RUN mkdir -p /third_party/ethabi
+# If the source of the COPY/ADD command is a folder, the contents of the folder are copied instead of itself
+COPY python-sdk/ /sdk/python
+COPY rust-sdk/coder/ /sdk/rust/coder
+COPY port-ethabi/ /tools/port-ethabi
+COPY ethabi/ /third_party/ethabi
+
+# Get Rust
+RUN curl https://sh.rustup.rs -sSf | sh -s -- -y
+ENV PATH="/root/.cargo/bin:${PATH}"
+RUN rustup update
+
+WORKDIR /sdk/python
+RUN python3 -m pip install --upgrade pip
+RUN python3 setup.py install
+
+WORKDIR /sdk/rust/coder
+RUN python3 setup.py install
+
 RUN mkdir -p /swarm
 WORKDIR /swarm
-
-# ENTRYPOINT ["/usr/local/bin/dumb-init", "--", "/script/file_server.sh"]
