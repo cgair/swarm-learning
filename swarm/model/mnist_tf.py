@@ -49,15 +49,14 @@ def main():
         save_freq=100)     # when using integer, the callback saves the model at end of this many batches. 
 
     # Create Swarm callback
-    swarmCallback = SwarmCallback(sync_interval=100)
+    swarmCallback = SwarmCallback(taskid=1, req_peer=2, sync_interval=100)
 
     model.fit(x_train, y_train, 
                 batch_size = 100,
                 epochs=max_epochs,
                 verbose=1, 
                 validation_data=(x_test, y_test),           
-                # callbacks=[save_model_callback, swarmCallback])    
-                callbacks=[save_model_callback])    
+                callbacks=[save_model_callback, swarmCallback])
 
     # Save model and weights
     # model_path = os.path.join(modelDir, model_name)
