@@ -7,12 +7,19 @@
 # 忽略 ...文件夹下的所有文件
 /swarm/model/checkpoints/
 /.vscode/
-/swarm/model/tests/blockchain_related/*
-/swarm/model/tests/python_related/*
-/swarm/model/tests/tensorflow_related/*
-/**/*.so
+/swarm/model/tests/blockchain_related/
+/swarm/model/tests/python_related/
+/swarm/model/tests/tensorflow_related/
 
-/docker/ufs
+# docker
+/docker/bin/conflux_production
+/docker/config/
+/docker/scripts/
+/docker/build.ubuntu.1804.treegraph.Dockerfile
+/docker/build.ubuntu.1804.runtime.Dockerfile
+/docker/cleanup.sh
+/docker/requirements.txt
+
 .idea/vcs.xml
 .gitignore
 .idea/*

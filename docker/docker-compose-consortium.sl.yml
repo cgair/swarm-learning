@@ -1,0 +1,84 @@
+version: '3.7'
+
+services:
+  swarm-node1:
+    build:
+      context: .
+      dockerfile: build.ubuntu.1804.runtime.Dockerfile
+    ports:
+      - 12537:12537
+    expose:
+      - 12537
+      - 39000
+      - 9100
+    volumes:
+      - ./config/192.168.1.21:/tree-graph
+    working_dir: /tree-graph
+    entrypoint: ./bin/conflux_production --customized-config customized_config.toml
+    container_name: sn1
+    networks:
+      internal:
+        ipv4_address: 192.168.1.21
+
+
+  swarm-node2:
+    build:
+      context: .
+      dockerfile: build.ubuntu.1804.runtime.Dockerfile
+    expose:
+      # - 12537
+      - 39000
+      - 9100
+    volumes:
+      - ./config/192.168.1.31:/tree-graph
+    working_dir: /tree-graph
+    entrypoint: ./bin/conflux_production --customized-config customized_config.toml
+    container_name: sn2
+    networks:
+      internal:
+        ipv4_address: 192.168.1.31
+
+
+  swarm-node3:
+    build:
+      context: .
+      dockerfile: build.ubuntu.1804.runtime.Dockerfile
+    expose:
+      # - 12537
+      - 39000
+      - 9100
+    volumes:
+      - ./config/192.168.1.102:/tree-graph
+    working_dir: /tree-graph
+    entrypoint: ./bin/conflux_production --customized-config customized_config.toml
+    container_name: sn3
+    networks:
+      internal:
+        ipv4_address: 192.168.1.102
+
+
+  swarm-node4:
+    build:
+      context: .
+      dockerfile: build.ubuntu.1804.runtime.Dockerfile
+    expose:
+      # - 12537
+      - 39000
+      - 9100
+    volumes:
+      - ./config/192.168.1.242:/tree-graph
+    working_dir: /tree-graph
+    entrypoint: ./bin/conflux_production --customized-config customized_config.toml
+    container_name: sn4
+    networks:
+      internal:
+        ipv4_address: 192.168.1.242
+        
+
+networks:
+  internal:
+  # IP Address Management (IPAM) is a method used to plan, 
+  # track and manage information associated with a network's Internet Protocol address space.
+    ipam:
+      config:
+        - subnet: 192.168.1.0/24

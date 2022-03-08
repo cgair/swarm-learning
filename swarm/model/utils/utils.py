@@ -3,8 +3,6 @@ import os
 import subprocess
 from time import sleep
 
-# MODEL_DIR = "/swarm/model/checkpoints/sl1/" # sl1
-# MODEL_DIR = "/swarm/model/checkpoints/sl2/" # sl2
 MODEL_DIR = "/swarm/model/checkpoints/" # sl2
 # CLUSTER = ["172.17.0.3:50051"] # sl2
 CLUSTER = ["172.17.0.4:50051"] # sl1
