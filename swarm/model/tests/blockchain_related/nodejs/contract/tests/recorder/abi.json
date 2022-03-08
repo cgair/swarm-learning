@@ -1,91 +1,283 @@
 [
-    {
-      "anonymous": false,
-      "inputs": [
-        {
-          "indexed": false,
-          "internalType": "address",
-          "name": "from",
-          "type": "address"
-        },
-        {
-          "indexed": false,
-          "internalType": "int256",
-          "name": "amount",
-          "type": "int256"
-        }
-      ],
-      "name": "RecordDone",
-      "type": "event"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        {
-          "indexed": false,
-          "internalType": "address",
-          "name": "from",
-          "type": "address"
-        },
-        {
-          "indexed": false,
-          "internalType": "int256",
-          "name": "amount",
-          "type": "int256"
-        }
-      ],
-      "name": "prepareGiftDone",
-      "type": "event"
-    },
-    {
-      "constant": false,
-      "inputs": [
-        {
-          "internalType": "int256",
-          "name": "para",
-          "type": "int256"
-        },
-        {
-          "internalType": "uint256",
-          "name": "epoch",
-          "type": "uint256"
-        }
-      ],
-      "name": "recordPara",
-      "outputs": [
-        {
-          "internalType": "bool",
-          "name": "",
-          "type": "bool"
-        }
-      ],
-      "payable": false,
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "constant": false,
-      "inputs": [],
-      "name": "getGift",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        },
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        },
-        {
-          "internalType": "int256",
-          "name": "",
-          "type": "int256"
-        }
-      ],
-      "payable": false,
-      "stateMutability": "nonpayable",
-      "type": "function"
-    }
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "getTest2",
+		"outputs": [
+			{
+				"name": "",
+				"type": "uint256"
+			},
+			{
+				"name": "",
+				"type": "uint256"
+			},
+			{
+				"name": "",
+				"type": "uint256"
+			},
+			{
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "id",
+				"type": "uint256"
+			},
+			{
+				"name": "reqNum",
+				"type": "uint256"
+			}
+		],
+		"name": "taskHandler",
+		"outputs": [
+			{
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "taskID",
+				"type": "uint256"
+			},
+			{
+				"name": "epoch",
+				"type": "uint128"
+			},
+			{
+				"name": "batch",
+				"type": "uint128"
+			},
+			{
+				"name": "layer",
+				"type": "uint64"
+			},
+			{
+				"name": "w_or_b",
+				"type": "uint64"
+			},
+			{
+				"name": "factor",
+				"type": "uint128"
+			},
+			{
+				"name": "offset",
+				"type": "uint128"
+			},
+			{
+				"name": "para",
+				"type": "int128[]"
+			}
+		],
+		"name": "recordPara",
+		"outputs": [
+			{
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [
+			{
+				"name": "taskID",
+				"type": "uint256"
+			},
+			{
+				"name": "layer",
+				"type": "uint64"
+			},
+			{
+				"name": "w_or_b",
+				"type": "uint64"
+			},
+			{
+				"name": "offset",
+				"type": "uint128"
+			}
+		],
+		"name": "getTest1",
+		"outputs": [
+			{
+				"name": "",
+				"type": "uint256"
+			},
+			{
+				"name": "",
+				"type": "uint256"
+			},
+			{
+				"name": "",
+				"type": "int128[]"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [
+			{
+				"name": "taskID",
+				"type": "uint256"
+			},
+			{
+				"name": "layer",
+				"type": "uint64"
+			},
+			{
+				"name": "w_or_b",
+				"type": "uint64"
+			},
+			{
+				"name": "offset",
+				"type": "uint128"
+			}
+		],
+		"name": "getGift",
+		"outputs": [
+			{
+				"name": "",
+				"type": "uint256"
+			},
+			{
+				"name": "",
+				"type": "uint256"
+			},
+			{
+				"name": "",
+				"type": "int128[]"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [],
+		"name": "clean",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"name": "taskID",
+				"type": "uint256"
+			},
+			{
+				"indexed": true,
+				"name": "who",
+				"type": "address"
+			}
+		],
+		"name": "InitTaskDone",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"name": "taskID",
+				"type": "uint256"
+			},
+			{
+				"indexed": true,
+				"name": "who",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"name": "enrollCount",
+				"type": "uint256"
+			}
+		],
+		"name": "UpdateTaskDone",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"name": "taskID",
+				"type": "uint256"
+			},
+			{
+				"indexed": true,
+				"name": "who",
+				"type": "address"
+			},
+			{
+				"indexed": true,
+				"name": "layer",
+				"type": "uint64"
+			},
+			{
+				"indexed": false,
+				"name": "w_or_b",
+				"type": "uint64"
+			},
+			{
+				"indexed": false,
+				"name": "offset",
+				"type": "uint128"
+			}
+		],
+		"name": "RecordDone",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"name": "taskID",
+				"type": "uint256"
+			},
+			{
+				"indexed": true,
+				"name": "layer",
+				"type": "uint64"
+			},
+			{
+				"indexed": true,
+				"name": "w_or_b",
+				"type": "uint64"
+			},
+			{
+				"indexed": false,
+				"name": "offset",
+				"type": "uint128"
+			}
+		],
+		"name": "PrepareGiftDone",
+		"type": "event"
+	}
 ]

@@ -5,9 +5,10 @@ let fs = require("fs")
 const ROOT_DIR = "./contract/tests/"
 
 const cfx = new Conflux({
-  url: 'http://localhost:12537/',
-  defaultGasPrice: 100,
-  defaultGas: 1000000,
+  url: 'http://192.168.1.31:12537/',
+//   url: 'http://localhost:12537/',
+  defaultGasPrice: 1000000,
+  defaultGas: 100000000,
   logger: console,
 });
 
@@ -16,7 +17,7 @@ const accountAlice = cfx.Account('0xb205017cc1b95e12aa37784b3e66eaf099ba6cf0e80c
 
 function showContract(contract1, contract2) {
     console.log(contract1);
-    console.log(contract2);
+    // console.log(contract2);
 }
 
 /*

@@ -40,6 +40,8 @@ def main():
                     metrics=['accuracy'])
 
     save_model_callback = tf.keras.callbacks.ModelCheckpoint(
+        # filepath='./checkpoints/sl1/weights.{epoch:02d}-{batch:02d}.h5', 
+        # filepath='./checkpoints/sl2/weights.{epoch:02d}-{batch:02d}.h5', 
         filepath='./checkpoints/weights.{epoch:02d}-{batch:02d}.h5', 
         save_weights_only=True, 
         verbose=1,

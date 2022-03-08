@@ -8,6 +8,7 @@ let config = require(ROOT_DIR + "config.json");
 const cfx = new Conflux({
   // 节点的地址和端口号，这里用的测试网。实际最好用最新的主网地址
   // url: config.rpc,
+  // url: 'http://localhost:12537/',
   url: 'http://localhost:12537/',
   defaultGasPrice: 100,
   defaultGas: 1000000,
