@@ -1,0 +1,11 @@
+jsonrpc_http_port = 12537
+
+jsonrpc_local_http_port = 12539
+
+grpc_tcp_port=9100
+
+mining_author = "101d81b296425adde6808a59a309c037e41e9f10"
+
+log_file = './conflux.log'
+
+log_level = "info"
