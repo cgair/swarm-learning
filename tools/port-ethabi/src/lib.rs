@@ -206,7 +206,7 @@ fn decode_call_output(path: &str, name_or_signature: &str, data: &str) -> anyhow
 	Ok(result)
 }
 
-fn decode_params(types: &[String], data: &str) -> anyhow::Result<String> {
+pub fn decode_params(types: &[String], data: &str) -> anyhow::Result<String> {
 	let types: Vec<ParamType> = types.iter().map(|s| Reader::read(s)).collect::<Result<_, _>>()?;
 
 	let data: Vec<u8> = hex::decode(&data)?;

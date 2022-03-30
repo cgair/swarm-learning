@@ -1,115 +1,177 @@
 [
 	{
-		"anonymous": false,
-		"inputs": [
+		"constant": true,
+		"inputs": [],
+		"name": "getTest2",
+		"outputs": [
 			{
-				"indexed": false,
-				"internalType": "uint256",
-				"name": "taskID",
+				"name": "",
 				"type": "uint256"
 			},
 			{
-				"indexed": false,
-				"internalType": "address",
-				"name": "who",
-				"type": "address"
+				"name": "",
+				"type": "uint256"
+			},
+			{
+				"name": "",
+				"type": "uint256"
+			},
+			{
+				"name": "",
+				"type": "uint256"
 			}
 		],
-		"name": "InitTaskDone",
-		"type": "event"
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
 	},
 	{
-		"anonymous": false,
+		"constant": false,
 		"inputs": [
 			{
-				"indexed": false,
-				"internalType": "uint256",
+				"name": "id",
+				"type": "uint256"
+			},
+			{
+				"name": "reqNum",
+				"type": "uint256"
+			}
+		],
+		"name": "taskHandler",
+		"outputs": [
+			{
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
 				"name": "taskID",
 				"type": "uint256"
 			},
 			{
-				"indexed": false,
-				"internalType": "uint64",
+				"name": "epoch",
+				"type": "uint128"
+			},
+			{
+				"name": "batch",
+				"type": "uint128"
+			},
+			{
 				"name": "layer",
 				"type": "uint64"
 			},
 			{
-				"indexed": false,
-				"internalType": "uint64",
 				"name": "w_or_b",
 				"type": "uint64"
 			},
 			{
-				"indexed": false,
-				"internalType": "uint128",
+				"name": "factor",
+				"type": "uint128"
+			},
+			{
 				"name": "offset",
 				"type": "uint128"
+			},
+			{
+				"name": "para",
+				"type": "int128[]"
 			}
 		],
-		"name": "PrepareGiftDone",
-		"type": "event"
+		"name": "recordPara",
+		"outputs": [
+			{
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
 	},
 	{
-		"anonymous": false,
+		"constant": true,
 		"inputs": [
 			{
-				"indexed": false,
-				"internalType": "uint256",
 				"name": "taskID",
 				"type": "uint256"
 			},
 			{
-				"indexed": false,
-				"internalType": "address",
-				"name": "who",
-				"type": "address"
-			},
-			{
-				"indexed": false,
-				"internalType": "uint64",
 				"name": "layer",
 				"type": "uint64"
 			},
 			{
-				"indexed": false,
-				"internalType": "uint64",
 				"name": "w_or_b",
 				"type": "uint64"
 			},
 			{
-				"indexed": false,
-				"internalType": "uint128",
 				"name": "offset",
 				"type": "uint128"
 			}
 		],
-		"name": "RecordDone",
-		"type": "event"
+		"name": "getTest1",
+		"outputs": [
+			{
+				"name": "",
+				"type": "uint256"
+			},
+			{
+				"name": "",
+				"type": "uint256"
+			},
+			{
+				"name": "",
+				"type": "int128[]"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
 	},
 	{
-		"anonymous": false,
+		"constant": true,
 		"inputs": [
 			{
-				"indexed": false,
-				"internalType": "uint256",
 				"name": "taskID",
 				"type": "uint256"
 			},
 			{
-				"indexed": false,
-				"internalType": "address",
-				"name": "who",
-				"type": "address"
+				"name": "layer",
+				"type": "uint64"
 			},
 			{
-				"indexed": false,
-				"internalType": "uint256",
-				"name": "enrollCount",
-				"type": "uint256"
+				"name": "w_or_b",
+				"type": "uint64"
+			},
+			{
+				"name": "offset",
+				"type": "uint128"
 			}
 		],
-		"name": "UpdateTaskDone",
-		"type": "event"
+		"name": "getGift",
+		"outputs": [
+			{
+				"name": "",
+				"type": "uint256"
+			},
+			{
+				"name": "",
+				"type": "uint256"
+			},
+			{
+				"name": "",
+				"type": "int128[]"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
 	},
 	{
 		"constant": false,
@@ -121,207 +183,101 @@
 		"type": "function"
 	},
 	{
-		"constant": true,
+		"anonymous": false,
 		"inputs": [
 			{
-				"internalType": "uint256",
+				"indexed": true,
 				"name": "taskID",
 				"type": "uint256"
 			},
 			{
-				"internalType": "uint64",
-				"name": "layer",
-				"type": "uint64"
-			},
-			{
-				"internalType": "uint64",
-				"name": "w_or_b",
-				"type": "uint64"
-			},
-			{
-				"internalType": "uint128",
-				"name": "offset",
-				"type": "uint128"
+				"indexed": true,
+				"name": "who",
+				"type": "address"
 			}
 		],
-		"name": "getGift",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			},
-			{
-				"internalType": "int128[]",
-				"name": "",
-				"type": "int128[]"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
+		"name": "InitTaskDone",
+		"type": "event"
 	},
 	{
-		"constant": true,
+		"anonymous": false,
 		"inputs": [
 			{
-				"internalType": "uint256",
+				"indexed": true,
 				"name": "taskID",
 				"type": "uint256"
 			},
 			{
-				"internalType": "uint64",
-				"name": "layer",
-				"type": "uint64"
+				"indexed": true,
+				"name": "who",
+				"type": "address"
 			},
 			{
-				"internalType": "uint64",
-				"name": "w_or_b",
-				"type": "uint64"
-			},
-			{
-				"internalType": "uint128",
-				"name": "offset",
-				"type": "uint128"
+				"indexed": false,
+				"name": "enrollCount",
+				"type": "uint256"
 			}
 		],
-		"name": "getTest1",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			},
-			{
-				"internalType": "int128[]",
-				"name": "",
-				"type": "int128[]"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
+		"name": "UpdateTaskDone",
+		"type": "event"
 	},
 	{
-		"constant": true,
-		"inputs": [],
-		"name": "getTest2",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"constant": false,
+		"anonymous": false,
 		"inputs": [
 			{
-				"internalType": "uint256",
+				"indexed": true,
 				"name": "taskID",
 				"type": "uint256"
 			},
 			{
-				"internalType": "uint128",
-				"name": "epoch",
-				"type": "uint128"
+				"indexed": true,
+				"name": "who",
+				"type": "address"
 			},
 			{
-				"internalType": "uint128",
-				"name": "batch",
-				"type": "uint128"
-			},
-			{
-				"internalType": "uint64",
+				"indexed": true,
 				"name": "layer",
 				"type": "uint64"
 			},
 			{
-				"internalType": "uint64",
+				"indexed": false,
 				"name": "w_or_b",
 				"type": "uint64"
 			},
 			{
-				"internalType": "uint128",
-				"name": "factor",
-				"type": "uint128"
-			},
-			{
-				"internalType": "uint128",
+				"indexed": false,
 				"name": "offset",
 				"type": "uint128"
-			},
-			{
-				"internalType": "int128[]",
-				"name": "para",
-				"type": "int128[]"
 			}
 		],
-		"name": "recordPara",
-		"outputs": [
-			{
-				"internalType": "bool",
-				"name": "",
-				"type": "bool"
-			}
-		],
-		"payable": false,
-		"stateMutability": "nonpayable",
-		"type": "function"
+		"name": "RecordDone",
+		"type": "event"
 	},
 	{
-		"constant": false,
+		"anonymous": false,
 		"inputs": [
 			{
-				"internalType": "uint256",
-				"name": "id",
+				"indexed": true,
+				"name": "taskID",
 				"type": "uint256"
 			},
 			{
-				"internalType": "uint256",
-				"name": "reqNum",
-				"type": "uint256"
-			}
-		],
-		"name": "taskHandler",
-		"outputs": [
+				"indexed": true,
+				"name": "layer",
+				"type": "uint64"
+			},
 			{
-				"internalType": "bool",
-				"name": "",
-				"type": "bool"
+				"indexed": true,
+				"name": "w_or_b",
+				"type": "uint64"
+			},
+			{
+				"indexed": false,
+				"name": "offset",
+				"type": "uint128"
 			}
 		],
-		"payable": false,
-		"stateMutability": "nonpayable",
-		"type": "function"
+		"name": "PrepareGiftDone",
+		"type": "event"
 	}
 ]

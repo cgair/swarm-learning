@@ -1,18 +1,18 @@
-# 忽略所有在 ... 下的 后缀 .？ 文件 
 /**/.DS_Store
 /**/__pycache__/
 /**/__init__.py
-# /docker/.DS_Store
-
-# 忽略 ...文件夹下的所有文件
-/swarm/model/checkpoints/
 /.vscode/
-/swarm/model/tests/blockchain_related/*
+
+# docker
+/docker/bin
+/docker/config
+/docker/scripts
+/docker/build.ubuntu.1804.treegraph.Dockerfile
+
 /swarm/model/tests/python_related/*
 /swarm/model/tests/tensorflow_related/*
 /**/*.so
 
-/docker/ufs
 .idea/vcs.xml
 .gitignore
 .idea/*
