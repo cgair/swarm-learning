@@ -5,9 +5,10 @@ let fs = require("fs")
 const ROOT_DIR = "./contract/tests/"
 
 const cfx = new Conflux({
-  url: 'http://localhost:12537/',
+//   url: 'http://localhost:12537/',
+  url: 'http://192.168.1.21:12537/',
   defaultGasPrice: 100,
-  defaultGas: 1000000,
+  defaultGas: 10000000,
   logger: console,
 });
 
