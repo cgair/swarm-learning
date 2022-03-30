@@ -1,0 +1,5 @@
+light_sealer.egg-info/PKG-INFO
+light_sealer.egg-info/SOURCES.txt
+light_sealer.egg-info/dependency_links.txt
+light_sealer.egg-info/requires.txt
+light_sealer.egg-info/top_level.txt

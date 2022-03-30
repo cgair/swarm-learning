@@ -1,0 +1,25 @@
+// Primitive types
+
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "io.grpc.conflux";
+option java_outer_classname = "PrimitiveProto";
+
+// package primitive;
+
+message Bytes { bytes bytes = 1; }
+
+message U64   { bytes bytes = 1; }
+message U128  { bytes bytes = 1; }
+message U256  { bytes bytes = 1; }
+
+message H64   { bytes bytes = 1; }
+message H160  { bytes bytes = 1; }
+message H256  { bytes bytes = 1; }
+message H512  { bytes bytes = 1; }
+message H520  { bytes bytes = 1; }
+message H2048 { bytes bytes = 1; }
+
+// Placeholder for methods returning unit type.
+message Empty {}

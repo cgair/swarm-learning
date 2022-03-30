@@ -1,0 +1,8 @@
+jsonrpcclient==3.3.6
+web3==5.28.0 # this will automatically install eth-utils, eth-*, rlp etc.
+py-ecc==5.1.0
+grpcio-tools==1.44.0
+coincurve==16.0.0
+pysha3==1.0.2
+setuptools-rust==1.1.2
+pytest==7.0.1

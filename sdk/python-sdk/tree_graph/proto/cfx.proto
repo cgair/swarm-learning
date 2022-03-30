@@ -1,0 +1,241 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "io.grpc.conflux.cfx";
+option java_outer_classname = "CfxProto";
+
+import "primitive.proto";
+import "message.proto";
+
+// Request and response types are postfixed with `Grpc` to avoid name collision.
+service Cfx {
+  rpc gas_price(GasPriceRequestGrpc) returns (GasPriceResponseGrpc);
+  rpc epoch_number(EpochNumberRequestGrpc) returns (EpochNumberResponseGrpc);
+  rpc balance(BalanceRequestGrpc) returns (BalanceResponseGrpc);
+  rpc admin(AdminRequestGrpc) returns (AdminResponseGrpc);
+  rpc code(CodeRequestGrpc) returns (CodeResponseGrpc);
+  rpc storage_at(StorageAtRequestGrpc) returns (StorageAtResponseGrpc);
+  rpc block_by_hash(BlockByHashRequestGrpc) returns (BlockByHashResponseGrpc);
+  rpc block_by_hash_with_pivot_assumption(BlockByHashWithPivotAssumptionRequestGrpc) returns (BlockByHashWithPivotAssumptionResponseGrpc);
+  rpc block_by_epoch_number(BlockByEpochNumberRequestGrpc) returns (BlockByEpochNumberResponseGrpc);
+  rpc best_block_hash(BestBlockHashRequestGrpc) returns (BestBlockHashResponseGrpc);
+  rpc next_nonce(NextNonceRequestGrpc) returns (NextNonceResponseGrpc);
+  rpc send_raw_transaction(SendRawTransactionRequestGrpc) returns (SendRawTransactionResponseGrpc);
+  rpc call(CallRequestGrpc) returns (CallResponseGrpc);
+  rpc get_logs(GetLogsRequestGrpc) returns (GetLogsResponseGrpc);
+  rpc transaction_by_hash(TransactionByHashRequestGrpc) returns (TransactionByHashResponseGrpc);
+  rpc estimate_gas(EstimateGasRequestGrpc) returns (EstimateGasResponseGrpc);
+  rpc blocks_by_epoch(BlocksByEpochRequestGrpc) returns (BlocksByEpochResponseGrpc);
+  rpc transaction_receipt(TransactionReceiptRequestGrpc) returns (TransactionReceiptResponseGrpc);
+  rpc account(AccountRequestGrpc) returns (AccountResponseGrpc);
+  rpc get_membership_change_raw_transaction(GetMembershipChangeRawTransactionRequestGrpc) returns (GetMembershipChangeRawTransactionResponseGrpc);
+  rpc construct_and_send_new_consortium_member_trans(ConstructAndSendNewConsortiumMemberTransRequestGrpc) returns (ConstructAndSendNewConsortiumMemberTransResponseGrpc);
+  rpc send_new_consortium_member_trans(SendNewConsortiumMemberTransRequestGrpc) returns (SendNewConsortiumMemberTransResponseGrpc);
+  rpc get_bft_membership_id(GetBftMembershipIdRequestGrpc) returns (GetBftMembershipIdResponseGrpc);
+  rpc get_validator_set(GetValidatorSetRequestGrpc) returns (GetValidatorSetResponseGrpc);
+  rpc update_consortium_and_grpc_credential(UpdateConsortiumAndGrpcCredentialRequestGrpc) returns (UpdateConsortiumAndGrpcCredentialResponseGrpc);
+  rpc get_consortium_certificate(GetConsortiumCertificateRequestGrpc) returns (GetConsortiumCertificateResponseGrpc);
+  rpc get_status(GetStatusRequestGrpc) returns (GetStatusResponseGrpc);
+}
+
+message GasPriceRequestGrpc {
+}
+message GasPriceResponseGrpc {
+  U256 result = 1;
+}
+
+message EpochNumberRequestGrpc {
+  EpochNumber epoch_number = 1;
+}
+message EpochNumberResponseGrpc {
+  U256 result = 1;
+}
+
+message BalanceRequestGrpc {
+  H160 addr = 1;
+  EpochNumber epoch_number = 2;
+}
+message BalanceResponseGrpc {
+  U256 result = 1;
+}
+
+message AdminRequestGrpc {
+  H160 addr = 1;
+  EpochNumber epoch_number = 2;
+}
+message AdminResponseGrpc {
+  H160 result = 1;
+}
+
+message CodeRequestGrpc {
+  H160 addr = 1;
+  EpochNumber epoch_number = 2;
+}
+message CodeResponseGrpc {
+  Bytes result = 1;
+}
+
+message StorageAtRequestGrpc {
+  H160 addr = 1;
+  H256 pos = 2;
+  EpochNumber epoch_number = 3;
+}
+message StorageAtResponseGrpc {
+  H256 result = 1;
+}
+
+message BlockByHashRequestGrpc {
+  H256 block_hash = 1;
+  bool include_txs = 2;
+}
+message BlockByHashResponseGrpc {
+  Block result = 1;
+}
+
+message BlockByHashWithPivotAssumptionRequestGrpc {
+  H256 block_hash = 1;
+  H256 pivot_hash = 2;
+  U64 epoch_number = 3;
+}
+message BlockByHashWithPivotAssumptionResponseGrpc {
+  Block result = 1;
+}
+
+message BlockByEpochNumberRequestGrpc {
+  EpochNumber epoch_number = 1;
+  bool include_txs = 2;
+}
+message BlockByEpochNumberResponseGrpc {
+  Block result = 1;
+}
+
+message BestBlockHashRequestGrpc {
+}
+message BestBlockHashResponseGrpc {
+  H256 result = 1;
+}
+
+message NextNonceRequestGrpc {
+  H160 addr = 1;
+  BlockHashOrEpochNumber epoch_number = 2;
+}
+message NextNonceResponseGrpc {
+  U256 result = 1;
+}
+
+message SendRawTransactionRequestGrpc {
+  Bytes raw_tx = 1;
+}
+message SendRawTransactionResponseGrpc {
+  H256 result = 1;
+}
+
+message CallRequestGrpc {
+  CallRequest tx = 1;
+  EpochNumber epoch_number = 2;
+}
+message CallResponseGrpc {
+  Bytes result = 1;
+}
+
+message GetLogsRequestGrpc {
+  Filter filter = 1;
+}
+message GetLogsResponseGrpc {
+  repeated Log result = 1;
+}
+
+message TransactionByHashRequestGrpc {
+  H256 tx_hash = 1;
+}
+message TransactionByHashResponseGrpc {
+  Transaction result = 1;
+}
+
+message EstimateGasRequestGrpc {
+  CallRequest request = 1;
+  EpochNumber epoch_number = 2;
+}
+message EstimateGasResponseGrpc {
+  EstimateGasResponse result = 1;
+}
+
+message BlocksByEpochRequestGrpc {
+  EpochNumber epoch_number = 1;
+}
+message BlocksByEpochResponseGrpc {
+  repeated H256 result = 1;
+}
+
+message TransactionReceiptRequestGrpc {
+  H256 tx_hash = 1;
+}
+message TransactionReceiptResponseGrpc {
+  Receipt result = 1;
+}
+
+message AccountRequestGrpc {
+  H160 address = 1;
+  EpochNumber epoch_num = 2;
+}
+message AccountResponseGrpc {
+  Account result = 1;
+}
+
+message GetMembershipChangeRawTransactionRequestGrpc{
+  repeated  H512 new_validators=1;
+  H512  proposer=2;
+}
+
+message GetMembershipChangeRawTransactionResponseGrpc{
+  string result =1;
+}
+
+message SendNewConsortiumMemberTransRequestGrpc {
+  Bytes raw = 1;
+}
+message SendNewConsortiumMemberTransResponseGrpc {
+  Empty result = 1;
+}
+
+message ConstructAndSendNewConsortiumMemberTransRequestGrpc {
+  string raw = 1;
+  repeated H512 public_keys=2;
+  repeated string signatures=3;
+}
+message ConstructAndSendNewConsortiumMemberTransResponseGrpc {
+  Empty result = 1;
+}
+
+message GetBftMembershipIdRequestGrpc {
+}
+message GetBftMembershipIdResponseGrpc {
+  uint64 result = 1;
+}
+
+message GetValidatorSetRequestGrpc {
+}
+message GetValidatorSetResponseGrpc {
+  repeated H512 result = 1;
+}
+
+message UpdateConsortiumAndGrpcCredentialRequestGrpc {
+  string consortium_cert_pem = 1;
+  string grpc_server_key_pem = 2;
+  string grpc_server_cert_pem = 3;
+}
+message UpdateConsortiumAndGrpcCredentialResponseGrpc {
+  Empty result = 1;
+}
+
+message GetConsortiumCertificateRequestGrpc {
+}
+message GetConsortiumCertificateResponseGrpc {
+  string result = 1;
+}
+
+message GetStatusRequestGrpc{
+}
+message GetStatusResponseGrpc{
+  Status result = 1;
+}

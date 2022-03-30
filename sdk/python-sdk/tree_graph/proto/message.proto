@@ -1,0 +1,161 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "io.grpc.conflux";
+option java_outer_classname = "MessageProto";
+
+import "primitive.proto";
+
+message Account {
+  U256 balance = 1;
+  U256 nonce = 2;
+  H256 code_hash = 3;
+  H160 admin = 4;
+}
+
+message EpochNumber {
+  enum Kind {
+    Num = 0;
+    LatestState = 1;
+    Earliest = 2;
+    LatestCheckpoint = 3;
+    LatestCandidate = 4;
+  }
+  Kind kind = 1;
+  uint64 number = 2;
+}
+
+message Block {
+  H256 hash = 1;
+  H256 parent_hash = 2;
+  U256 height = 3;
+  H160 miner = 4;
+  H256 deferred_state_root = 5;
+  H256 deferred_receipts_root = 6;
+  H256 deferred_logs_bloom_hash = 7;
+  H256 transactions_root = 8;
+  U256 epoch_number = 9;
+  U256 gas_limit = 10;
+  U256 timestamp = 11;
+  repeated H256 referee_hashes = 12;
+  U256 nonce = 13;
+  BlockTransactions transactions = 14;
+  U256 size = 15;
+}
+
+message Status {
+  H256 best_hash = 1;
+  H256 best_candidate_hash = 2;
+  U64 epoch_number = 3;
+  U64 block_number = 4;
+  U64 pending_tx_number = 5;
+}
+
+// `oneof` cannot contain `repeated` variants.
+message BlockTransactions {
+  enum Kind {
+    Hashes = 0;
+    Full = 1;
+  }
+  Kind kind = 1;
+  repeated H256 hashes = 2;
+  repeated Transaction transactions = 3;
+}
+
+message BlockHashOrEpochNumber {
+  oneof kind {
+    H256 block_hash = 1;
+    EpochNumber epoch_number = 2;
+  }
+}
+
+message CallRequest {
+  H160 from = 1;
+  H160 to = 2;
+  U256 gas_price = 3;
+  U256 gas = 4;
+  U256 value = 5;
+  Bytes data = 6;
+  U256 nonce = 7;
+}
+
+message Filter {
+  // Repeated fields cannot be optional, so we use wrappers.
+  message BlockHashes {
+    repeated H256 block_hashes = 1;
+  }
+  message Address {
+    repeated H160 address = 1;
+  }
+  message TopicOr {
+    repeated H256 topics = 1;
+  }
+  message Topic {
+    // Each topic can have a optional OR-logic filter.
+    TopicOr or_filter = 1;
+  }
+
+  EpochNumber from_epoch = 1;
+  EpochNumber to_epoch = 2;
+  BlockHashes block_hashes = 3;
+  Address address = 4;
+  // Up to 4 topics. Filter in AND-logic.
+  repeated Topic topics = 5;
+  U64 limit = 6;
+}
+
+message Log {
+  H160 address = 1;
+  repeated H256 topics = 2;
+  Bytes data = 3;
+  H256 block_hash = 4;
+  U256 epoch_number = 5;
+  H256 transaction_hash = 6;
+  U256 transaction_index = 7;
+  U256 log_index = 8;
+  U256 transaction_log_index = 9;
+}
+
+message Transaction {
+  H256 hash = 1;
+  U256 nonce = 2;
+  H256 block_hash = 3;
+  U256 transaction_index = 4;
+  H160 from = 5;
+  H160 to = 6;
+  U256 value = 7;
+  U256 gas_price = 8;
+  U256 gas = 9;
+  H160 contract_created = 10;
+  Bytes data = 11;
+  U256 epoch_height = 12;
+  U256 chain_id = 13;
+  U256 status = 14;
+  U256 v = 15;
+  U256 r = 16;
+  U256 s = 17;
+}
+
+message EstimateGasResponse {
+  U256 gas_used = 1;
+}
+
+message Receipt {
+  message EpochNumber {
+    uint64 epoch_number = 1;
+  }
+
+  H256 transaction_hash = 1;
+  uint64 index = 2;
+  H256 block_hash = 3;
+  // uint64 cannot be optional.
+  EpochNumber epoch_number = 4;
+  H160 from = 5;
+  H160 to = 6;
+  U256 gas_used = 7;
+  H160 contract_created = 8;
+  repeated Log logs = 9;
+  bytes logs_bloom = 10;
+  H256 state_root = 11;
+  uint32 outcome_status = 12;
+}
