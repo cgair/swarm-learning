@@ -1,14 +1,14 @@
 /**/.DS_Store
 /**/__pycache__/
-/**/__init__.py
 /.vscode/
 
 # docker
-/docker/bin
-/docker/config
-/docker/scripts
+/docker/bin/
+/docker/config/
+/docker/scripts/
 /docker/build.ubuntu.1804.treegraph.Dockerfile
 
+/swarm/model/checkpoints/w*
 /swarm/model/tests/python_related/*
 /swarm/model/tests/tensorflow_related/*
 /**/*.so
