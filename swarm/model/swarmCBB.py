@@ -2,10 +2,13 @@
 import tensorflow as tf
 import numpy as np
 import sys
+import time
 from hexbytes import HexBytes
 
 from utils.utils import MODEL_DIR, SPLIT_SIZE, \
-                        file_prepared, caclulate_factor, send_msg, split_list_by_n, should_split, expand_with_factor, processed, init_task, get_status
+                        file_prepared, caclulate_factor, send_msg, expand_with_factor, \
+                        split_list_by_n, should_split, processed, init_task, get_status, \
+                        get_merged, parse_logs, prepare_done, parse_merged
 from tree_graph.client.jsonrpc_client import *
 
 class SwarmCallback(tf.keras.callbacks.Callback):
@@ -23,7 +26,12 @@ class SwarmCallback(tf.keras.callbacks.Callback):
         self._batches_seen_since_last_merging = 0
         self._batches_seen_since_last_syncing = 0
         self._last_batch_seen = 0
-        self._client = JsonRpcClient("192.168.1.21", "12537")
+        
+        self._client = JsonRpcClient("192.168.1.6", "12537")
+        self._epoch_num = 0
+        self._factor = 0
+        self._start = 0.0
+        self._end = 0.0
 
     def on_epoch_begin(self, epoch, logs=None):
         print("[+] Start epoch {}.".format(epoch))
@@ -32,11 +40,15 @@ class SwarmCallback(tf.keras.callbacks.Callback):
     def on_train_begin(self, logs=None):
         print("[+] Init task...")
         epoch_num = self._init_task(self._client, self.taskid, self.req_peer)
+        print("[+] Init task Done at {epoch_num} in blockchain.")
         print("[+] Starting training.")
+        self._start = time.clock()
         # sys.exit(f"[+] End on train begin") 
 
     def on_train_end(self, logs=None):
-        print("[+] Training ended.")
+        # Program execution time = cpu time + io time + sleep or wait time
+        self._end = time.clock()
+        print(f"[+] Training ended, time consuming:{self._end - self._start}")
             
     def on_train_batch_end(self, batch, logs=None):
         if self._should_sync_merge_on_batch(batch):
@@ -56,19 +68,43 @@ class SwarmCallback(tf.keras.callbacks.Callback):
         if isinstance(self.merge_freq, int):
             # Block only when merging interval is reached.
             print(f"[+] Reconstitution at epoch: {epoch}, batch: {batch}...")
-            # prepare containers
-            prepare_list = locals()
-            weights = self.model.get_weights() 
-            size = len(weights)
-            for i in range(0, size):
-                shape = weights[i].shape
-                prepare_list['layer_' + str(i)] = [0.0] * shape[0]
+            # another while Ture
+            while True:
+                logs = get_status(self._client, self._epoch_num)
+                # print(f"[+] logs[] = {logs}")
+                if prepare_done(logs):
+                    break
+            taskid, layer, w_or_b, offset = parse_logs(logs)
+            ret = get_merged(self._client, taskid, layer, w_or_b, offset)
+            print(f"[+] Got encoded result at this epoch = {ret}")
+            merged_weights = parse_merged(ret[2:], self._factor)
+            # print(f"[+] Got decoded result at this epoch = {merged_weights}")
+            merged_weights = np.array(merged_weights)
+            # print(f"[+] merged_weights's len = {len(merged_weights)}")
+            # print(f"[+] model.layers[1] = {self.model.layers[1].get_weights()}")
+            # print(f"[+] model.layers[1]'s len = {len(self.model.layers[1].get_weights())}")
+            # print(f"[+] TRACE: merged_weights = {merged_weights}")
+            
+            ret_l = []
+            l1w = self.model.get_weights()[0]
+            l2w = self.model.get_weights()[2]
+            l2b = self.model.get_weights()[3]
+            ret_l.append(l1w)
+            l1b = np.reshape(merged_weights, (128,))
+            ret_l.append(l1b)
+            ret_l.append(l2w)
+            ret_l.append(l2b)
+            merged = np.array(ret_l, dtype=object)
 
-            merged_weights = []
-            layer = 0
-            offset = 0
-            factor = 10
+            # print(f"[+]第一层的w shape = {l1w.shape}")  #第一层的w
+            # print(f"[+]第一层的b shape = {l1b.shape}")  
+            # print(f"[+]第二层的w shape = {l2w.shape}")  #第二层的w
+            # print(f"[+]第二层的b shape = {l2b.shape}")  #第二层的b
 
+            # self.model.set_weights(merged)
+            # sys.exit(f"[+] End on decoded") 
+
+            '''
             start = int(offset)
             end = int(start + SPLIT_SIZE)
             prepare_list['layer_' + str(layer)][start: end] = processed(factor, merged_weights)
@@ -76,11 +112,12 @@ class SwarmCallback(tf.keras.callbacks.Callback):
             ret_l = []
             for i in range(0, size):
                 before = np.array(prepare_list['layer_' + str(i)])
-                ret = before.rehsape(before, weights[i].shape)
+                ret = np.rehsape(before, weights[i].shape)
                 ret_l.append(ret)
             
             merged_weights = np.array(ret_l)
             self.model.set_weights(merged_weights)
+            '''
 
     def _should_sync_merge_on_batch(self, batch):
         """Handles batch-level syncing logic.
@@ -114,8 +151,9 @@ class SwarmCallback(tf.keras.callbacks.Callback):
                     print(f"[+] Syncing at epoch: {e}, batch: {b}...")
                     model_name = 'weights.{:0>2}-{:0>2}.h5'.format(e, b)
                     file = f"{MODEL_DIR}{model_name}"
-                    print(f"[+] Merging ...")
+                    print(f"[+] Syncing ...")
                     self._process_weights(e, b, file)
+                    return
                 else: 
                     print(f"[-] File does not prepared, retry {i}")
 
@@ -124,8 +162,26 @@ class SwarmCallback(tf.keras.callbacks.Callback):
         # Loads the weights
         model.load_weights(file)
         weights = model.get_weights() # 获取整个网络模型的全部参数
-        # model.summary() 
 
+        # ATTN: cause this is a merge b only version, we ignore some params
+        # Calculate the factor that should be expanded, cause solidity only has int256 and uint256
+        bs = list(weights [1].flatten())
+        factor = caclulate_factor(bs)
+        self._factor = factor
+        bs = expand_with_factor(bs, factor)
+        # print(f"[+] TRACE: data after expand is {bs}")
+        # print(f"[+] epoch = {epoch}, batch = {batch}, layer = 0, w_or_b = 1, factor = {factor}")
+        epoch_number = send_msg(self._client,
+                                epoch,
+                                batch,
+                                0,
+                                1,
+                                factor,
+                                0,
+                                bs
+                            )
+        self._epoch_num = epoch_number
+        '''
         size = len(weights)
         for x in range(0, size):
             shape = weights [x].shape
@@ -159,12 +215,12 @@ class SwarmCallback(tf.keras.callbacks.Callback):
                          0,
                          flattend
                         )
-
+        '''
     
     def _get_model(self):
         model = tf.keras.models.Sequential([
             tf.keras.layers.Flatten(input_shape=(28, 28)),
-            tf.keras.layers.Dense(512, activation=tf.nn.relu),
+            tf.keras.layers.Dense(128, activation=tf.nn.relu),
             tf.keras.layers.Dropout(0.2),
             tf.keras.layers.Dense(10, activation=tf.nn.softmax)
         ])

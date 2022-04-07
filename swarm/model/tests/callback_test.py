@@ -2,9 +2,15 @@
 import numpy as np
 import tensorflow as tf
 import math
-# from swarmCBB import SwarmCallback
 from utils.utils import number_of_digits_post_decimal, caclulate_factor, expand_with_factor, \
-                    should_split, split_list_by_n, processed, SPLIT_SIZE
+                    should_split, split_list_by_n, processed, SPLIT_SIZE, parse_logs
+def test_parse_logs():
+    logs = [{'address': '0x8c7d67a81a7148dff4aafbba94b06e3c1fa86cd6', 'blockHash': '0xf52e55311921408d706dcf875b3574ef568d64dbb52d80022b4968b48d5e463c', 'data': '0x', 'epochNumber': '0x1944', 'logIndex': '0x0', 'topics': ['0x37bb154f4af11c2ad09fcb84fcfa4c6b5d8e1a9cf9f7fc6dedf09d9b9cac0af8', '0x0000000000000000000000000000000000000000000000000000000000000004', '0x00000000000000000000000019aeb665dfa6a8445a46cd9a5c666ac6c0d03c54'], 'transactionHash': '0xe464ed58cdc80b9e5329ffa85d3d91ef8319ae73acf7a9e06e2e28ef5e3f45ca', 'transactionIndex': '0x0', 'transactionLogIndex': '0x0'}, {'address': '0x8c7d67a81a7148dff4aafbba94b06e3c1fa86cd6', 'blockHash': '0x149fd239d91bca22e7fe034d4065c589089637b9e0dedba84e08ee47634b0157', 'data': '0x00000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000000', 'epochNumber': '0x1947', 'logIndex': '0x0', 'topics': ['0x5213845946959a8b4c3e89b8a2f5000fd33f91e39c10c86df18ae57605c2cd35', '0x0000000000000000000000000000000000000000000000000000000000000004', '0x00000000000000000000000019aeb665dfa6a8445a46cd9a5c666ac6c0d03c54', '0x0000000000000000000000000000000000000000000000000000000000000000'], 'transactionHash': '0x4777572d2590606929019574788ab890fcb98fac8e8f6cad95b857b76cc8249e', 'transactionIndex': '0x0', 'transactionLogIndex': '0x0'}, {'address': '0x8c7d67a81a7148dff4aafbba94b06e3c1fa86cd6', 'blockHash': '0xe36c68572f95fcad67c18710eb432e305c94bb0e95161e16e72a12d4176de7a4', 'data': '0x0000000000000000000000000000000000000000000000000000000000000002', 'epochNumber': '0x1956', 'logIndex': '0x0', 'topics': ['0xc1fe5bc39b930588ec2115239681b70237f5cd8e637e5ec2acf68ae33e879126', '0x0000000000000000000000000000000000000000000000000000000000000004', '0x0000000000000000000000001f9422c17a85f15473d5e25834d17d48c2356c7c'], 'transactionHash': '0x6545f1016c4806ab2ec61ab696760c2fa74ef101c729bd9291cd9c9fb5f3204e', 'transactionIndex': '0x0', 'transactionLogIndex': '0x0'}, {'address': '0x8c7d67a81a7148dff4aafbba94b06e3c1fa86cd6', 'blockHash': '0x56c39d225714b53ce240b3e969ee435355dd90b694a3ff1f9e2d74ff93b049e5', 'data': '0x0000000000000000000000000000000000000000000000000000000000000000', 'epochNumber': '0x195a', 'logIndex': '0x0', 'topics': ['0x5572b3f2f4cc6c154ee555ce79315632da4659523f9ae1d8dbebf71e6fcf58ef', '0x0000000000000000000000000000000000000000000000000000000000000004', '0x0000000000000000000000000000000000000000000000000000000000000000', '0x0000000000000000000000000000000000000000000000000000000000000001'], 'transactionHash': '0x83ce1c4a048bef5c4702e23588fd31c58ef767db66f987d60c445c342e924ce7', 'transactionIndex': '0x0', 'transactionLogIndex': '0x0'}]
+    taskid, layer, w_or_b, offset = parse_logs(logs)
+    assert taskid == 4
+    assert layer == 0
+    assert w_or_b == 1
+    assert offset == 0
 
 def test_number_of_digits_post_decimal():
     assert number_of_digits_post_decimal(-0.1234567) == 7
@@ -130,7 +136,8 @@ def test_full_steps():
 def _get_model():
     model = tf.keras.models.Sequential([
         tf.keras.layers.Flatten(input_shape=(28, 28)),
-        tf.keras.layers.Dense(512, activation=tf.nn.relu),
+        # tf.keras.layers.Dense(512, activation=tf.nn.relu),
+        tf.keras.layers.Dense(128, activation=tf.nn.relu),
         tf.keras.layers.Dropout(0.2),
         tf.keras.layers.Dense(10, activation=tf.nn.softmax)
     ])

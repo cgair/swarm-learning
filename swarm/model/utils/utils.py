@@ -1,26 +1,33 @@
 #!/usr/bin/env python3
 import os
-import sys
 import eth_utils
+
+from time import sleep
 from typing import List, Tuple
 from utils.weights_wrapper import Weights
 from tree_graph.types.filter import Filter
-from coder_lib import encode_many
+from coder_lib import encode_many, decode_many
 from codecs import encode
+from utils.load_config import Conf
 
-MODEL_DIR = "/swarm/model/checkpoints/"
-SPLIT_SIZE = 2048
+conf = Conf()
+MODEL_DIR = conf.default("model_dir")
+SPLIT_SIZE = conf.default("split_size")
+# print(f"[+] conf = {SPLIT_SIZE}, type = {type(SPLIT_SIZE)}")
 
-DEFAULT_TX_GAS_PRICE = 80 * (10 ** 9) * 10 + 4
-DEFAULT_TX_GAS = 2100000
+DEFAULT_TX_GAS_PRICE = conf.default("default_tx_gas_price")
+DEFAULT_TX_GAS = conf.default("default_tx_gas")
 
-BOB_ADDR = "0x19aeb665dfa6a8445a46cd9a5c666ac6c0d03c54"
-BOB_PK = "0xb205017cc1b95e12aa37784b3e66eaf099ba6cf0e80cf10f8fc87b44abba53a7"
+ADDR = conf.address()
+PK = conf.private_key()
+CONTRACT = conf.contract()
+TASK_ID = conf.task_id()
 
-ALICE_ADDR = "0x1f9422c17a85f15473d5e25834d17d48c2356c7c"
-ALICE_PK = "0x5bba79b1fbba518c7283750cf6a1175f3180fab586c1b1787539885f3132ef4f"
+# BOB_ADDR = "0x19aeb665dfa6a8445a46cd9a5c666ac6c0d03c54"
+# BOB_PK = "0xb205017cc1b95e12aa37784b3e66eaf099ba6cf0e80cf10f8fc87b44abba53a7"
 
-CONTRACT = "0x82b92834bfba83f55f80faca6d5094338911ca9c"
+# ALICE_ADDR = "0x1f9422c17a85f15473d5e25834d17d48c2356c7c"
+# ALICE_PK = "0x5bba79b1fbba518c7283750cf6a1175f3180fab586c1b1787539885f3132ef4f"
 
 
 def file_prepared(epoch, batch):
@@ -43,7 +50,11 @@ def caclulate_factor(weights):
 
 
 def number_of_digits_post_decimal(x):
-    return len(str(x).split(".")[1])
+        post_len = len(str(x).split("."))
+        if post_len > 1:
+            return len(str(x).split(".")[1])
+        else:
+            return 0
 
 
 def should_split(shape: Tuple[int, int]) -> bool:
@@ -66,6 +77,8 @@ def split_list_by_n(list_collection: List[int], n=SPLIT_SIZE):
 
 
 def processed(factor: int, slices) -> List[float]:
+    """
+    """
     processed = [x/factor for x in slices]
     return processed
 
@@ -73,10 +86,10 @@ def processed(factor: int, slices) -> List[float]:
 def init_task(client, taskid: int, req_num: int):
     data = get_data("taskHandler(uint256,uint256)", ["uint256", str(taskid), "uint256", str(req_num)])
     b_val = bytes.fromhex(data)
-    nextNonce = client.get_nonce(ALICE_ADDR)
+    nextNonce = client.get_nonce(ADDR)
     epoch_number = client.epoch_number()
 
-    tx = client.new_tx(sender=ALICE_ADDR,
+    tx = client.new_tx(sender=ADDR,
                        receiver=CONTRACT, 
                        nonce=nextNonce,
                        gas_price=DEFAULT_TX_GAS_PRICE,
@@ -84,11 +97,12 @@ def init_task(client, taskid: int, req_num: int):
                        value=0, 
                        data=b_val, 
                        sign=True, 
-                       priv_key=ALICE_PK, 
+                       priv_key=PK, 
                        epoch_height=epoch_number, 
                        chain_id=0)
     tx_hash = client.send_tx(tx)
     print(f"[+] tx hash: {tx_hash}")
+
     while True: 
         receipt = client.get_transaction_receipt(tx_hash)
         if receipt is not None:
@@ -98,25 +112,24 @@ def init_task(client, taskid: int, req_num: int):
             # print(f"[+] tx outcomeStatus: {outcomeStatus}")
             return epoch_number
 
-    
-
 
 def send_msg(client, epoch: int, batch: int, layer: int, w_or_b: int, factor: int, offset: int, weight: List[int]):
     """
     """
     func_proto = eth_utils.keccak(b"recordPara(uint256,uint128,uint128,uint64,uint64,uint128,uint128,int128[])")
     data_prefix = func_proto[0:4].hex()
-    w = Weights(epoch, batch, layer, w_or_b, factor, offset)
+    w = Weights(epoch, batch, layer, w_or_b, factor, offset, TASK_ID)
     w.from_weights(weight)
     data_body = w.encode()
     data_hex = data_prefix + data_body
+    # print(f"[+] data in hex: {data_hex}")
     b_val = bytes.fromhex(data_hex)
 
-    nextNonce = client.get_nonce(ALICE_ADDR)
+    nextNonce = client.get_nonce(ADDR)
     epoch_number = client.epoch_number()
 
     # contract recorder addr = ''
-    tx = client.new_tx(sender=ALICE_ADDR,
+    tx = client.new_tx(sender=ADDR,
                        receiver=CONTRACT, 
                        nonce=nextNonce,
                        gas_price=DEFAULT_TX_GAS_PRICE,
@@ -124,11 +137,12 @@ def send_msg(client, epoch: int, batch: int, layer: int, w_or_b: int, factor: in
                        value=0, 
                        data=b_val, 
                        sign=True, 
-                       priv_key=ALICE_PK, 
+                       priv_key=PK, 
                        epoch_height=epoch_number, 
                        chain_id=0)
     tx_hash = client.send_tx(tx)
-    print(f"[+] tx hash: {tx_hash}")
+    # print(f"[+] tx hash: {tx_hash}")
+
     while True: 
         receipt = client.get_transaction_receipt(tx_hash)
         if receipt is not None:
@@ -136,15 +150,11 @@ def send_msg(client, epoch: int, batch: int, layer: int, w_or_b: int, factor: in
             outcomeStatus = receipt["outcomeStatus"]
             assert int(outcomeStatus) == 0, "Send tx failed"
             # print(f"[+] tx outcomeStatus: {outcomeStatus}")
-            return 
+            return epoch_number
 
     # When using python to connect to web3, the address needs to be checked first.
     # for contract address we should accept lower case address because ganache, at the moment, print contract address in lower case.
     # for account address we should accept only checksum address.
-
-    # while True:
-    #     if ll.record_event(taskID, Web3.toChecksumAddress(who), layer, w_or_b, offset):
-    #         return tx_hash
 
 
 def expand_with_factor(weights, factor: int) -> List[int]:
@@ -170,10 +180,95 @@ def get_data(func_proto: str, data: List[str]):
 # TODO: use rust decode log
 def get_status(client, epoch_number: int, address=[CONTRACT]):
     filt = Filter(from_epoch=hex(epoch_number), to_epoch="latest_state", address=address)
-    print(f"[+] epoch_number = {epoch_number}")
     while True:
+        sleep(3)
         logs = client.get_logs(filt)
-        print(f"[+] logs[] = {logs}")
         if len(logs) > 0:
             return logs
     
+
+def get_merged(client, taskid, layer, w_or_b, offset):
+    data = get_data("getGift(uint256,uint64,uint64,uint128)", ["uint256", str(taskid), "uint64", str(layer), "uint64", str(w_or_b), "uint128", str(offset)])
+    data = "0x" + data
+    resp = cfx_call(data=data)
+    return resp    
+
+
+def parse_logs(logs):
+    func_proto = eth_utils.keccak(b"PrepareGiftDone(uint256,uint64,uint64,uint128)")
+    prepare_done = "0x" + func_proto.hex()
+    for log in logs:
+        topics = log['topics']
+        if topics:
+            if topics[0] == prepare_done:
+                taskid = int(topics[1], 16)
+                layer = int(topics[2], 16)
+                w_or_b = int(topics[3], 16)
+                offset = int(log["data"], 16)
+                return taskid, layer, w_or_b, offset
+    print("[-] DEBUG: PrepareGiftDone event does not omit")
+            
+
+
+def prepare_done(logs) -> bool:
+    func_proto = eth_utils.keccak(b"PrepareGiftDone(uint256,uint64,uint64,uint128)")
+    prepare_done = "0x" + func_proto.hex()
+    for log in logs:
+        topics = log['topics']
+        if topics:
+            if topics[0] == prepare_done:
+                return True
+    print("[-] Result does not prepared, start another loop...")
+    return False
+
+
+def parse_merged(data, factor):
+    merged_weights = []
+    # decode_many has depreciated beacause some bug
+    # ret = decode_many(["uint256", "uint256", "int128[]"], data)
+    # we implement simple decode manually
+    assert len(data) % 32 == 0, "Invalid data"
+
+
+
+    ret = list(chunkstring(data, 64))
+    assert len(ret[4:]) == 128, "Invalid data"
+    for r in ret[4:]:
+        # value = hex_to_signed(r)
+        # if value is not None and factor is not None:
+        value = int(r, 16)
+        ui = round(value/(2* 10 ** factor), factor)
+        merged_weights.append(ui)
+    return merged_weights
+
+
+def chunkstring(string, length):
+    return (string[0+i:length+i] for i in range(0, len(string), length))
+
+
+# TODO: integrate cfx_call into python sdk
+def cfx_call(data: str, contract=CONTRACT):
+    import requests
+    import json
+    headers = {
+        'Content-type': 'application/json',
+    }
+    data = {'method': "cfx_call", 'id': 1, "jsonrpc": "2.0", "params":[{"to":CONTRACT, "data": data}]}
+    data = json.dumps(data)
+    # print(f"[+] DEBUG: cfx_call request data = {data}")
+    response = requests.post('http://192.168.1.6:12537', headers=headers, data=data)
+    print(f"[+] response = {response.json()}")
+    if response.json().get('result'):
+        return response.json().get('result')
+    else:
+        print(f"[-] Something went wrong with cfx_call.")
+        return None
+
+
+import math # hex string to signed integer 
+def hex_to_signed(val): 
+    uintval = int(val,16) 
+    bits = 4 * ( len(val) - 2) 
+    if uintval >= math.pow(2,bits-1): 
+        uintval = int(0 - (math.pow(2,bits) - uintval)) 
+        return uintval 

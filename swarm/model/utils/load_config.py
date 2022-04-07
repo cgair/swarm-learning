@@ -1,4 +1,5 @@
 import json
+import toml
 
 
 class Account:
@@ -13,3 +14,19 @@ class Account:
 
 
 # Example:  print(Account('Alice').address())
+
+class Conf:
+    def __init__(self, path="../../config/config.toml"):
+        self._conf = toml.load(path)
+
+    def address(self):
+        return self._conf["account"]["address"]
+
+    def private_key(self):
+        return self._conf["account"]["private_key"]
+    
+    def contract(self):
+        return self._conf["contract"]["address"]
+
+    def default(self, which: str):
+        return self._conf["default_conf"][which]

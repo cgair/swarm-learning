@@ -8,13 +8,13 @@ let config = require(ROOT_DIR + "config.json");
 const cfx = new Conflux({
   // 节点的地址和端口号，这里用的测试网。实际最好用最新的主网地址
   // url: config.rpc,
-  url: 'http://192.168.1.21:12537/',
+  url: 'http://58.246.44.146:12537/',
   defaultGasPrice: 100,
   defaultGas: 1000000,
   logger: console,
 });
 
-const accountAlice = cfx.Account('0xb205017cc1b95e12aa37784b3e66eaf099ba6cf0e80cf10f8fc87b44abba53a7');
+const accountAlice = cfx.Account('0x5bba79b1fbba518c7283750cf6a1175f3180fab586c1b1787539885f3132ef4f');
 const contract = cfx.Contract({
   abi: require(ROOT_DIR + 'abi.json'),
   bytecode: "0x" + require(ROOT_DIR + 'bytecode.json').bytecode

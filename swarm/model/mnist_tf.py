@@ -30,7 +30,7 @@ def main():
 
     model = tf.keras.models.Sequential([
         tf.keras.layers.Flatten(input_shape=(28, 28)),
-        tf.keras.layers.Dense(512, activation=tf.nn.relu),
+        tf.keras.layers.Dense(128, activation=tf.nn.relu),
         tf.keras.layers.Dropout(0.2),
         tf.keras.layers.Dense(10, activation=tf.nn.softmax)
     ])
@@ -55,8 +55,10 @@ def main():
                 batch_size = 100,
                 epochs=max_epochs,
                 verbose=1, 
-                validation_data=(x_test, y_test),           
-                callbacks=[save_model_callback, swarmCallback])
+                validation_data=(x_test, y_test),       
+                # callbacks=[save_model_callback, swarmCallback]    
+                callbacks=[save_model_callback]
+            )
 
     # Save model and weights
     # model_path = os.path.join(modelDir, model_name)
