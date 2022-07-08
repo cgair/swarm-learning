@@ -20,8 +20,7 @@ class SwarmCallback(tf.keras.callbacks.Callback):
         self._batches_seen_since_last_merging = 0
         self._batches_seen_since_last_syncing = 0
         self._last_batch_seen = 0
-        self._client = "JsonRpcClient(192.168.1.21, 12537)"
-
+        
     def on_epoch_begin(self, epoch, logs=None):
         print("[+] Start epoch {}.".format(epoch))
         self._current_epoch = epoch

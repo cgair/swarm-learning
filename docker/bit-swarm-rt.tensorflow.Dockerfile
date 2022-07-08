@@ -33,12 +33,12 @@ RUN rustup update
 # COPY script/file_server.sh /script/
 # RUN chmod +x /script/file_server.sh
 
-# ENV UFS_LOG=debug
-# RUN mkdir -p /ufs/SMLNODE/fs
-# RUN mkdir -p /ufs/config
-# ADD default.toml /ufs/config/
-# ADD bin/ufs /usr/sbin/
-# RUN mkdir -p /ufs/logs
+ENV UFS_LOG=debug
+RUN mkdir -p /ufs/SMLNODE/fs
+RUN mkdir -p /ufs/config
+ADD default.toml /ufs/config/
+ADD bin/ufs /usr/sbin/
+RUN mkdir -p /ufs/logs
 
 # See http://bugs.python.org/issue19846
 ENV LANG C.UTF-8

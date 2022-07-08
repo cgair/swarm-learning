@@ -2,6 +2,7 @@ import tensorflow as tf
 import numpy as np
 from swarmCBB import SwarmCallback
 import os
+import sys
 
 max_epochs = 2
 
@@ -24,6 +25,10 @@ def main():
     dataDir = os.getenv('DATA_DIR', '../data')
     modelDir = os.getenv('MODEL_DIR', '../model')
     model_name = 'mnist_tf'
+    sl_name = os.environ.get("SL")
+    checkpoints_path = f'./checkpoints/{sl_name}'
+    if not os.path.exists(checkpoints_path):
+        os.makedirs(checkpoints_path)
 
     (x_train, y_train),(x_test, y_test) = load_data(dataDir)
     x_train, x_test = x_train / 255.0, x_test / 255.0
@@ -42,7 +47,7 @@ def main():
     save_model_callback = tf.keras.callbacks.ModelCheckpoint(
         # filepath='./checkpoints/sl1/weights.{epoch:02d}-{batch:02d}.h5', 
         # filepath='./checkpoints/sl2/weights.{epoch:02d}-{batch:02d}.h5', 
-        filepath='./checkpoints/weights.{epoch:02d}-{batch:02d}.h5', 
+        filepath=f'./checkpoints/{sl_name}/' + 'weights.{epoch:02d}-{batch:02d}.h5', 
         save_weights_only=True, 
         verbose=1,
         monitor='val_loss', 
@@ -66,4 +71,4 @@ def main():
     # print('Saved the trained model!')
 
 if __name__ == '__main__':
-  main()
+    main()
