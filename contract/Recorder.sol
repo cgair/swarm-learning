@@ -106,6 +106,10 @@ contract Recorder {
             delete t.recorders[t.SNPresenters[k]][s.layer][s.w_or_b][s.offset];
         }
 
+        for(uint i = 0; i < len; i++) {
+            g[i] = g[i]/(int128)(t.SNPresenters.length);
+        }
+
         // TODO: lajihuishou
         return true;
     }
