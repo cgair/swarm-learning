@@ -16,10 +16,12 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update && apt-get install -y curl \
     wget \
+    # iputils-ping
     python3 \
     python3-pip \
-    # iputils-ping
-    python3.7-tk 
+    python3-tk 
+
+# RUN apt-get clean
 
 # Downloading the dumb-init binary directly
 # RUN wget -O /usr/local/bin/dumb-init https://github.com/Yelp/dumb-init/releases/download/v1.2.5/dumb-init_1.2.5_x86_64

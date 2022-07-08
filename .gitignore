@@ -4,9 +4,9 @@
 
 # docker
 /docker/bin/
-/docker/config/
 /docker/scripts/
 /docker/build.ubuntu.1804.treegraph.Dockerfile
+/docker/build.build.ubuntu.1804.runtime.Dockerfile
 
 /swarm/model/checkpoints/w*
 /swarm/model/tests/python_related/*

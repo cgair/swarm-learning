@@ -251,7 +251,3 @@ class JsonRpcClient(object):
 
     def get_bft_membership_id(self) -> int:
         return self._rpc.cfx_getBFTMembershipId()
-
-    def get_call(self, tx: Transaction) -> dict:
-        encoded = eth_utils.encode_hex(rlp.encode(tx))
-        return self._rpc.cfx_call(encoded)
